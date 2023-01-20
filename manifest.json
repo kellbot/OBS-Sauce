@@ -1,0 +1,24 @@
+{
+    "manifest_version": 1,
+    "name": "OBS Mod",
+    "description": "I make things neato",
+    "author": "Kelly Maguire",
+    "website_url": "https://kellbot.com",
+    "version": "0.0.1",
+    "web_root": "pages",
+    "windows": [{
+        "file": "pages/obs-basic.html",
+        "id": "obs-kellbot",
+        "name": "OBS Kellbot",
+        "description": "Kellbot's OBS Window",
+        "always_visible": false,
+        "overlay": true,
+        "frame": true,
+        "default_bounds": {
+            "width": 0.5,
+            "height": 500,
+            "x": 100,
+            "y": -100
+        }
+    }]
+}

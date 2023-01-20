@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Mono:wght@200;600&family=Noto+Sans:wght@200;300;600&family=Tourney&display=swap" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+<script src="./script.js"></script>
+	<style>
+	body {
+		font-family: 'Noto Sans';
+	}
+		#container {
+			height: 1080px;
+			background-color: #874B00;
+		}
+		#zwift {
+			background-color: #666666;
+			width: 1280px;
+			height: 960px;
+			position: absolute;
+			right: 20px;
+			top: 20px;
+
+			border-left: 5px solid #AD6509;
+			border-top: 5px solid #AD6509;
+			border-right: 5px solid #EAA044;
+			border-bottom: 5px solid #EAA044;
+
+		}
+
+		#right-section{
+			position: absolute;
+			left: 590px;
+			top:0;
+			border-right: 5px solid #AD6509;
+			border-left: 5px solid #EAA044;
+			height: 1080px;
+			width: 1400px;
+			background-color: #D98214;
+		}
+		.bumper-column {
+			border-right: 5px solid #AD6509;
+			border-left: 5px solid #EAA044;
+			width: 20px;
+			height: 1080px;
+			background-color: #D98214;
+		}
+		#event-info {
+		
+			font-size: 60px;
+			font-family: 'Tourney', cursive;
+			padding: 5px;
+			padding-top: 10px;
+			text-shadow: 2px 2px 5px #EABE44;
+			
+		}
+		#course-name { 
+									
+			width: 280px;
+			font-family: 'Noto Sans';
+			font-weight: 600;
+			font-size: 35px;
+			float: left;
+				margin-right: 3px;
+
+		}
+		#course-name .infolabel {
+
+				white-space: nowrap;
+				overflow: hidden;
+		}
+		.scrollbox{
+			animation: move 25s linear infinite;
+			 display: inline-block;
+			 padding-left: 100%;
+		}
+		@keyframes move {
+		    0%   { transform: translate(0, 0); }
+		    100% { transform: translate(-100%, 0); }
+		}
+		#timer {
+						
+			display: inline-block;
+			width: 222px;
+			font-family: 'Noto Sans Mono';
+			font-weight: 600;
+			font-size: 35px;
+		}
+		#sidebar {
+				position: absolute;
+			top: 0px;
+			left: 35px;
+
+			width: 550px;
+		}
+		.raised-section {
+			padding: 5px;
+			border-right: 5px solid #AD6509;
+			border-left: 5px solid #EAA044;
+			border-top: 5px solid #EAA044;
+						border-bottom: 5px solid #AD6509;
+					background-color: #D98214;
+
+			margin-bottom: 6px;
+		}
+		.infolabel {
+			background-color:  #043656;
+			padding: 15px 10px ;
+			
+			border-left: 5px solid #AD6509;
+			border-top: 5px solid #AD6509;
+			border-right: 5px solid #EAA044;
+			border-bottom: 5px solid #EAA044;
+			text-align: center;
+
+			color: #EABE44;
+		}
+		.infolabel .subtitle {
+			font-family: 'Comfortaa';
+			color: white;
+			font-size: 20px;
+		}
+		#roster {
+			position: fixed;
+			bottom: 0px;
+			width: 530px;
+		}
+		#roster h3 {
+			font-family: 'Tourney';
+			font-size: 50px;
+			color: #EABE44;
+			font-weight: 400;
+			text-shadow: 2px 2px 5px #EABE44;
+			margin: 0;
+		}
+		.smallplain {
+			font-family: 'Noto Sans';
+			font-size: 40px;
+		}
+		#roster .infolabel {
+			color: #CCCCCC;
+			font-family: 'Noto Sans';
+			font-weight: 600;
+			padding: 20px;
+		}
+		#roster ul {
+			list-style-type: none;
+			text-align: left;
+			padding-left: 0;
+			font-size: 25px;
+			letter-spacing: 2px;
+		}
+		#roster li {
+			border-bottom: 0px solid #dddddd;
+			padding: 10px 20px;
+		}
+		#roster li:last-child {
+			border-bottom: none;
+		}
+		#roster li:nth-child(odd) {
+			background-color: #0c486f;
+		}
+
+		#roster .monotime {
+			float: right;
+			font-family: 'Noto Sans Mono';
+			color: #5590B2;
+		}
+		#stats {
+			height: 245px;
+		}
+		#stats .infolabel {
+			height: 205px;
+		}
+		#powerzone { 
+			width: 400px;
+			margin: auto;
+			color: white;
+		}
+		@keyframes slideup {
+			from {width: 30%;}
+			to {width: 67%;}
+		}
+		.meter {
+			padding: 1%;
+			height: 40px;
+			  box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.4), 0 1px rgba(255, 255, 255, 0.08);
+			border-radius: 15px;
+
+		}
+		.zone {
+			width: 20%;
+			padding: 0;
+			margin: 0;
+			float: left;
+			border-radius: 0;
+		}
+		.track{
+			border-radius: 15px;
+            width: 100%;
+            color: white;
+            text-align: right;
+            font-size: 20px;
+
+
+  background-image: 
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 10%, rgba(255,255,255,0) 10%, rgba(255,255,255,0) 90%, rgba(0, 0, 0, 0.3) 90%),
+  	linear-gradient(to right, #171b72 80px, #005e31 80px, #005e31 160px, #a47c0b 160px, #a47c0b 240px, #a4600b 240px,  #a4600b 320px, #872200 320px, #872200 400px);
+  transition: 0.4s linear;  
+  transition-property: background-color;  
+             height: 40px;
+
+          }
+
+	</style>
+
+
+
+</head>
+<body>
+<div id="container">
+	<div id="left-bumper" class="bumper-column">
+	</div>
+	<div id="sidebar">
+		<div id="event-info" class="raised-section">
+			<div class="infolabel">ZRL Round 3
+			</div>
+		</div>
+		<div id="course-name" class="raised-section"><div class="infolabel"><div class="scrollbox"></div></div></div>
+		<div id="timer" class="raised-section"><div class="infolabel">0:00:00
+		</div></div>
+		<div id="stats" class="raised-section">
+			<div class="infolabel">
+				<div id="powerzone">
+					<span id="current-power">25</span> W
+					<div class="meter">
+							<div class="track"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="roster" class="raised-section">
+
+			<div class="infolabel">
+				<h3>Herd <span class="smallplain">of</span> Panthers</h3>
+				<ul></ul>
+			</div>
+		</div>
+	</div>
+
+	<div id="right-section">
+	</div>
+	<div id="zwift">
+	</div>
+</div>
+</body>
+</html>
