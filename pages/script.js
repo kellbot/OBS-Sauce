@@ -43,7 +43,7 @@ $(function() {
 $('#course-name .scrollbox').html(teamData.course);
 
 async function setupSelf(){
-	const response = await fetch("../../../../api/athlete/stats/v1/self");
+	const response = await fetch("../../../../api/athlete/stats/v1/watching");
 	let userData = await response.json();   	
 	refreshStats(userData);
 	console.log(userData);
@@ -64,6 +64,9 @@ function refreshStats(athlete) {
 	if (zonePCT > 100) zonePCT = 100;
 	$('#current-hr').html(athlete.state.heartrate);
 	$('#powerzone .track').animate({'width': zonePCT + '%'}, 900);
+
+	$('#lap-count').html(athlete.state.laps);
+	$('#lap .track').animate({'width': athlete.state.progress * 100}, 900);
 
 }
 
