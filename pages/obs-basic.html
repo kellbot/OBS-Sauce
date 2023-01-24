@@ -2,6 +2,7 @@
 <html>
 <head>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Mono:wght@200;600&family=Noto+Sans:wght@200;300;600&family=Tourney&display=swap" rel="stylesheet">
@@ -167,6 +168,7 @@
 		#roster .monotime {
 			float: right;
 			font-family: 'Noto Sans Mono';
+			font-weight: 600;
 			color: #5590B2;
 		}
 		#stats {
@@ -177,14 +179,17 @@
 		}
 		#powerzone { 
 			width: 400px;
-			margin: auto;
+			margin: 10px auto;
 			color: white;
+			font-size: 30px;
+
 		}
 		@keyframes slideup {
 			from {width: 30%;}
 			to {width: 67%;}
 		}
 		.meter {
+			margin-top: 5px;
 			padding: 1%;
 			height: 40px;
 			  box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.4), 0 1px rgba(255, 255, 255, 0.08);
@@ -208,13 +213,19 @@
 
   background-image: 
     linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 10%, rgba(255,255,255,0) 10%, rgba(255,255,255,0) 90%, rgba(0, 0, 0, 0.3) 90%),
-  	linear-gradient(to right, #171b72 80px, #005e31 80px, #005e31 160px, #a47c0b 160px, #a47c0b 240px, #a4600b 240px,  #a4600b 320px, #872200 320px, #872200 400px);
+  	linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px * 1/6 + 20px), #47C63A calc(400px * 2/6 - 20px), #FFD300 calc(400px * 2/6 + 20px), #FFD300 calc(400px * 3/6 - 20px), #FF9900 calc(400px * 3/6 + 20px),  #FF9900 calc(400px * 4/6 - 20px), #F44E5A calc(400px * 4/6 + 20px), #F44E5A calc(400px * 5/6 - 20px), #9C1AA3 calc(400px * 5/6), #9C1AA3 400px);
   transition: 0.4s linear;  
   transition-property: background-color;  
              height: 40px;
 
           }
 
+    #heartrate {
+    	margin-top: 10px;
+    	font-size: 55px;
+    	color: white;
+    	font-family: 'Noto Sans Mono';
+    }
 	</style>
 
 
@@ -229,11 +240,16 @@
 			<div class="infolabel">ZRL Round 3
 			</div>
 		</div>
-		<div id="course-name" class="raised-section"><div class="infolabel"><div class="scrollbox"></div></div></div>
+		<div id="course-name" class="raised-section"><div class="infolabel">
+			<div class="scrollbox"></div></div></div>
 		<div id="timer" class="raised-section"><div class="infolabel">0:00:00
 		</div></div>
 		<div id="stats" class="raised-section">
 			<div class="infolabel">
+				<div id="heartrate">
+					<i class="fa-solid fa-heart-pulse"></i>
+					<span id="current-hr"></span>
+				</div>
 				<div id="powerzone">
 					<span id="current-power">25</span> W
 					<div class="meter">
@@ -245,7 +261,7 @@
 		<div id="roster" class="raised-section">
 
 			<div class="infolabel">
-				<h3>Herd <span class="smallplain">of</span> Panthers</h3>
+				<h3>Herd <span class="smallplain">of</span> Ostriches</h3>
 				<ul></ul>
 			</div>
 		</div>
