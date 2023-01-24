@@ -14,8 +14,10 @@
 		font-family: 'Noto Sans';
 	}
 		#container {
+			widht: 1920px;
 			height: 1080px;
 			background-color: #874B00;
+			position: relative;
 		}
 		#zwift {
 			background-color: #666666;
@@ -91,10 +93,10 @@
 			font-size: 35px;
 		}
 		#sidebar {
-				position: absolute;
+			position: absolute;
 			top: 0px;
 			left: 35px;
-
+			height: 1080px;
 			width: 550px;
 		}
 		.raised-section {
@@ -125,7 +127,7 @@
 			font-size: 20px;
 		}
 		#roster {
-			position: fixed;
+			position: absolute;
 			bottom: 0px;
 			width: 530px;
 
@@ -147,7 +149,7 @@
 			font-family: 'Noto Sans';
 			font-weight: 600;
 			padding: 20px;
-height: 468px;
+			height: 378px;
 		}
 		#roster ul {
 			list-style-type: none;
@@ -173,11 +175,8 @@ height: 468px;
 			font-weight: 600;
 			color: #5590B2;
 		}
-		#stats {
-			height: 245px;
-		}
 		#stats .infolabel {
-			height: 205px;
+			height: 295px;
 		}
 		#powerzone { 
 			width: 400px;
@@ -186,19 +185,7 @@ height: 468px;
 			font-size: 30px;
 
 		}
-		@keyframes slideup {
-			from {width: 30%;}
-			to {width: 67%;}
-		}
-		.meter {
-			margin-top: 5px;
-			padding: 1%;
-			height: 40px;
-			  box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.4), 0 1px rgba(255, 255, 255, 0.08);
-			border-radius: 15px;
-
-		}
-		.zone {
+				.zone {
 			width: 20%;
 			padding: 0;
 			margin: 0;
@@ -221,6 +208,36 @@ height: 468px;
              height: 40px;
 
           }
+		#lap {
+			width: 400px;
+				font-size: 20px;
+			margin: 10px auto;
+			position: relative;
+		}
+		#lap .label {
+			position: absolute;
+			right: 13px;
+			top: 10px;
+		}
+		#lap .track {
+			background-image: 
+   			 linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 10%, rgba(255,255,255,0) 10%, rgba(255,255,255,0) 90%, rgba(0, 0, 0, 0.3) 90%);
+  		background-color: #008DE3;
+		}
+
+		@keyframes slideup {
+			from {width: 30%;}
+			to {width: 67%;}
+		}
+		.meter {
+			margin-top: 5px;
+			padding: 1%;
+			height: 40px;
+			  box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.4), 0 1px rgba(255, 255, 255, 0.08);
+			border-radius: 15px;
+
+		}
+
 
     #heartrate {
     	margin-top: 10px;
@@ -260,11 +277,11 @@ height: 468px;
 					</div>
 				</div>
 				<div id="lap">
-					Lap:
-					<span id="lap-count"></span>
 					<div class="meter">
-							<div class="track"></div>
-					</div>
+						<div class="label">Lap
+							<span id="lap-count"></span></div>
+								<div class="track"></div>
+						</div>
 				</div>
 			</div>
 		</div>

@@ -65,8 +65,8 @@ function refreshStats(athlete) {
 	$('#current-hr').html(athlete.state.heartrate);
 	$('#powerzone .track').animate({'width': zonePCT + '%'}, 900);
 
-	$('#lap-count').html(athlete.state.laps);
-	$('#lap .track').animate({'width': athlete.state.progress * 100}, 900);
+	$('#lap-count').html(athlete.state.laps+1);
+	$('#lap .track').animate({'width': athlete.state.progress * 100 + '%'}, 900);
 
 }
 
