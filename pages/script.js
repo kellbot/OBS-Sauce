@@ -3,23 +3,23 @@ let teamData = {
 	"course" : "Innsbruckring",
 	"team": [
 		{
-			"name" : "Richard Badger-Taylor",
+			"name" : "Badger",
 			"zid" : 3478319
 		},
 		{
-			"name" : "Jason Blackbourn",
+			"name" : "Jason",
 			"zid" : 1354412
 		},
 		{
-			"name" : "Steve Knowles",
+			"name" : "Steve",
 			"zid" : 2570152
 		},
 		{
-			"name" : "Gaz Jones",
+			"name" : "Gaz",
 			"zid" : 408281
 		},
 		{
-			"name" : "James Grant",
+			"name" : "James",
 			"zid" : 1331113
 		}
 
