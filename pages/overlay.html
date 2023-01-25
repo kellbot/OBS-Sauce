@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Mono:wght@200;600&family=Noto+Sans:wght@200;300;600&family=Tourney&display=swap" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+<script src="./script.js"></script>
+	<link href="./layout.css" rel="stylesheet" />
+
+	<script src="src/overlay.mjs" type="module"></script>
+
+</head>
+<body>
+<div id="container">
+	<div id="left-bumper" class="bumper-column">
+	</div>
+	<div id="sidebar">
+		<div id="event-info" class="raised-section">
+			<div class="infolabel">ZRL Round 3
+			</div>
+		</div>
+		<div id="course-name" class="raised-section"><div class="infolabel">
+			<div class="scrollbox"></div></div></div>
+		<div id="timer" class="raised-section"><div class="infolabel">0:00:00
+		</div></div>
+		<div id="stats" class="raised-section">
+			<div class="infolabel">
+				<div id="heartrate">
+					<i class="fa-solid fa-heart-pulse"></i>
+					<span id="current-hr"></span>
+				</div>
+				<div id="powerzone">
+					Power: 
+					<span id="current-power">25</span> W
+					<div class="meter">
+							<div class="track"></div>
+					</div>
+				</div>
+				<div id="lap">
+					<div class="meter">
+						<div class="label">Lap
+							<span id="lap-count"></span></div>
+								<div class="track"></div>
+						</div>
+				</div>
+			</div>
+		</div>
+		<div id="roster" class="raised-section">
+
+			<div class="infolabel">
+				<h3>Herd <span class="smallplain">of</span> Ostriches</h3>
+				<ul></ul>
+			</div>
+		</div>
+	</div>
+
+	<div id="right-section">
+	</div>
+	<div id="zwift">
+	</div>
+</div>
+</body>
+</html>
