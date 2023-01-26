@@ -172,13 +172,7 @@ body {
 	#stats .infolabel {
 		height: 295px;
 	}
-	#powerzone { 
-		width: 400px;
-		margin: 10px auto;
-		color: white;
-		font-size: 30px;
 
-	}
 			.zone {
 		width: 20%;
 		padding: 0;
@@ -235,7 +229,18 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 
 #heartrate {
 	margin-top: 10px;
-	font-size: 55px;
-	color: white;
+	font-size: 30px;
 	font-family: 'Noto Sans Mono';
+	display: inline-block;
+}
+#cadence {
+	display: inline-block;
+	font-size: 30px;
+	margin-left: 20px;
+}
+#powerzone { 
+	width: 400px;
+	margin: 10px auto;
+	font-size: 30px;
+	clear: both;
 }

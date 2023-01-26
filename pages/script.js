@@ -60,6 +60,7 @@ async function setupSelf(){
 	const response = await fetch("../../../../api/athlete/stats/v1/" + target);
 	let userData = await response.json();   	
 	refreshStats(userData);
+	console.log(userData)
 }
 
 function refreshStats(athlete) {
@@ -76,7 +77,7 @@ function refreshStats(athlete) {
 	if (zonePCT < 0) zonePCT = 5;
 	if (zonePCT > 100) zonePCT = 100;
 	$('#current-hr').html(athlete.state.heartrate);
-	$('#powerzone .track').animate({'width': zonePCT + '%'}, 900);
+	$('#powerzone .track').animate({'width': zonePCT + '%'}, 2700);
 }
 
 
@@ -149,8 +150,8 @@ function swapLines(firstLine, secondLine) {
 
 populateLeaderboard();
 
-setInterval(setupSelf, 1000);
-setInterval(updateDisplay, 3000);
+setInterval(setupSelf, 3000);
+setInterval(updateDisplay, 1000);
 //updateDisplay();	
 });
 
