@@ -1,28 +1,36 @@
-let sandbox = true;
+let sandbox = false;
 
 let teamData = {
-	"event" : "ZRL 3.3",
-	"course" : "Innsbruckring",
+	"event" : "WTRL TTT 197",
+	"course" : "Richmond UCI Worlds",
 	"team": [
 		{
-			"name" : "Badger",
-			"zid" : 3478319
+			"name" : "Kevin R",
+			"zid" : 4548230
 		},
 		{
-			"name" : "Jason",
-			"zid" : 1354412
+			"name" : "Kevin B",
+			"zid" : 3935431
 		},
 		{
-			"name" : "Steve",
-			"zid" : 2570152
+			"name" : "Ro",
+			"zid" : 2672785
 		},
 		{
-			"name" : "Gaz",
-			"zid" : 408281
+			"name" : "Maik",
+			"zid" : 2840298
 		},
 		{
-			"name" : "James",
-			"zid" : 1331113
+			"name" : "Dom",
+			"zid" : 717384
+		},
+		{
+			"name" : "Mathew",
+			"zid" : 3658694
+		},
+		{
+			"name" : "Carl",
+			"zid" : 3109268
 		}
 
 	]
@@ -69,10 +77,6 @@ function refreshStats(athlete) {
 	if (zonePCT > 100) zonePCT = 100;
 	$('#current-hr').html(athlete.state.heartrate);
 	$('#powerzone .track').animate({'width': zonePCT + '%'}, 900);
-
-	$('#lap-count').html(athlete.state.laps+1);
-	$('#lap .track').animate({'width': athlete.state.progress * 100 + '%'}, 900);
-
 }
 
 
