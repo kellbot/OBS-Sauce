@@ -14,7 +14,7 @@ let team = [
     {'athleteId': 1150050, 'displayName' : "K. Orange" , 'data' : {}},
 ]
 
-let sandbox = true;
+let sandbox = false;
 let nearbyData;
 let lastRefresh;
 let tbody;
