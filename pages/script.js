@@ -119,9 +119,9 @@ function swapLines(firstLine, secondLine) {
 		});
 }
 
-populateLeaderboard();
+//populateLeaderboard();
 
-setInterval(updateDisplay, 1000);
+//setInterval(updateDisplay, 1000);
 //updateDisplay();	
 });
 

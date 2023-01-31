@@ -119,6 +119,9 @@ body {
 		width: 530px;
 
 	}
+	#roster .name {
+		width: 50%;
+	}
 	#roster h3 {
 		font-family: 'Noto Sans';
 		font-size: 50px;
@@ -138,28 +141,35 @@ body {
 		padding: 20px;
 		height: 378px;
 	}
-	#roster ul {
-		list-style-type: none;
+	#roster-table {
 		text-align: left;
-		padding-left: 0;
-		font-size: 25px;
-		letter-spacing: 2px;
-		margin: 0;
-	}
-	#roster li {
-		border-bottom: 0px solid #dddddd;
-		padding: 10px 20px;
-		position: relative;
-		word-wrap: none;
-	}
-	#roster li:last-child {
-		border-bottom: none;
+		width: 100%
 	}
 	#roster .monotime {
-		float: right;
 		font-family: 'Noto Sans Mono';
-		font-weight: 600;
-		color: #5590B2;
+		text-align: right;
+	}
+	#roster th {
+		font-weight: bold;
+		font-size: 16px;
+		text-transform: uppercase;
+		color: #666666;
+		font-family: 'Exo 2';
+	}
+	#roster tr {
+		font-size: 25px;
+	}
+	#roster td {
+		white-space: nowrap;
+		overflow: hidden;
+	}
+	#roster .draft {
+		width: 20%;
+		text-align: right;
+	}
+
+	.right-heading {
+		text-align: right;
 	}
 	#stats .infolabel {
 		height: 295px;
