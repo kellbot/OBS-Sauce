@@ -14,7 +14,7 @@ let team = [
     {'athleteId': 1150050, 'displayName' : "K. Orange" , 'data' : {}},
 ]
 
-let sandbox = false;
+let sandbox = true;
 let nearbyData;
 let lastRefresh;
 let tbody;
@@ -42,6 +42,8 @@ function makeLazyGetter(cb) {
         }
     };
 }
+
+const lazyGetSubgroup = makeLazyGetter(id => common.rpc.getEventSubgroup(id));
 const lazyGetRoute = makeLazyGetter(id => common.rpc.getRoute(id));
 
 function getRoute(state) {
@@ -80,7 +82,7 @@ function renderStats(watching){
     if (route.name) worldDesc += ": " + route.name;
 
     let riderTime = toHoursAndMinutes(watching.stats.elapsedTime);
-    let courseProgress = watching.state.courseProgress;
+    let courseProgress = watching.state.progress;
 
     doc.querySelector('#timer .infolabel').innerHTML = 
         riderTime.h + ":" + riderTime.m.toString().padStart(2,0) + ":" + riderTime.s.toString().padStart(2,0);
@@ -91,7 +93,7 @@ function renderStats(watching){
     doc.querySelector('#current-hr').innerHTML = hrvalue;
     doc.querySelector('#current-power').innerHTML =  power;
     doc.querySelector('#current-draft').innerHTML = draft + "%";
-    console.log(rider);
+
 }
 
 async function main() {
@@ -157,9 +159,16 @@ function renderRoster(data){
         } 
     } else {
         let rows = tbody.querySelectorAll('tr');
-        for(let i = 0; i < rows.length; i++){
+
+        for(let i = 0; i < riders.length; i++){
             let rider = riders[i];
-            rows[i].innerHTML = updateRow(rider);
+            if(i < rows.length) {
+                rows[i].innerHTML = updateRow(rider);
+            } else {
+                const tr = document.createElement('tr');
+                tr.innerHTML = updateRow(rider);
+                tbody.appendChild(tr);
+            }
         }
         
     }
