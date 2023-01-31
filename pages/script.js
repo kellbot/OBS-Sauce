@@ -1,4 +1,4 @@
-let sandbox = false;
+let sandbox = true;
 
 let teamData = {
 	"event" : "WTRL TTT 197",
@@ -50,36 +50,7 @@ $(function() {
 
 
 	$('#rider-template').hide();
-$('#course-name .scrollbox').html(teamData.course);
-
-async function setupSelf(){
-	let target = 'self';
-	if (sandbox) {
-		target = 'watching';
-	}
-	const response = await fetch("../../../../api/athlete/stats/v1/" + target);
-	let userData = await response.json();   	
-	refreshStats(userData);
-	console.log(userData)
-}
-
-function refreshStats(athlete) {
-	let riderTime = toHoursAndMinutes(athlete.stats.elapsedTime);
-	$('#timer .infolabel').html(
-		riderTime.h + ":" + riderTime.m.toString().padStart(2,0) + ":" + riderTime.s.toString().padStart(2,0)
-	);
-	$('#current-power').html(athlete.state.power.toString() + "W - FTP: " + athlete.athlete.ftp);
-	//calculate zone from FTP
-	//=(B12/A12 * 100 - 45) / 15 * 16.6
-	let zonePCT = Math.floor(
-		(athlete.state.power / athlete.athlete.ftp * 100 - 45) / 15 * (100/6)
-		);
-	if (zonePCT < 0) zonePCT = 5;
-	if (zonePCT > 100) zonePCT = 100;
-	$('#current-hr').html(athlete.state.heartrate);
-	$('#powerzone .track').animate({'width': zonePCT + '%'}, 2700);
-}
-
+//$('#course-name .scrollbox').html(teamData.course);
 
 async function populateLeaderboard(){
 	if (sandbox) {
@@ -150,7 +121,6 @@ function swapLines(firstLine, secondLine) {
 
 populateLeaderboard();
 
-setInterval(setupSelf, 3000);
 setInterval(updateDisplay, 1000);
 //updateDisplay();	
 });

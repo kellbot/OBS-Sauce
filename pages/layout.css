@@ -4,7 +4,7 @@ body {
 #container {
 	width: 1920px;
 	height: 1080px;
-	background-color: #874B00;
+	background-color: #222222;
 	position: relative;
 }
 	#zwift {
@@ -14,11 +14,7 @@ body {
 		position: relative;
 		right: -20px;
 		top: 15px;
-
-		border-left: 5px solid #AD6509;
-		border-top: 5px solid #AD6509;
-		border-right: 5px solid #EAA044;
-		border-bottom: 5px solid #EAA044;
+		border: 5px solid #666666;
 
 	}
 
@@ -26,11 +22,9 @@ body {
 		position: absolute;
 		left: 590px;
 		top:0;
-		border-right: 5px solid #AD6509;
-		border-left: 5px solid #EAA044;
+		margin: 5px;
 		height: 1080px;
 		width: 1330px;
-		background-color: #D98214;
 	}
 	#chat .infolabel {
 		width: 1260px;
@@ -40,11 +34,10 @@ body {
 		bottom: -10px;
 	}
 	.bumper-column {
-		border-right: 5px solid #AD6509;
-		border-left: 5px solid #EAA044;
+		border-right: 5px solid #111111;
+		border-left: 5px solid #111111;
 		width: 20px;
 		height: 1080px;
-		background-color: #D98214;
 	}
 	#event-info {
 	
@@ -96,22 +89,21 @@ body {
 	}
 	.raised-section {
 		padding: 5px;
-		border-right: 5px solid #AD6509;
-		border-left: 5px solid #EAA044;
-		border-top: 5px solid #EAA044;
-					border-bottom: 5px solid #AD6509;
-				background-color: #D98214;
+		border-right: 5px solid #111111;
+		border-left: 5px solid #111111;
+		border-top: 5px solid #111111;
+					border-bottom: 5px solid #111111;
+				background-color: #111111;
 
 		margin-bottom: 6px;
 	}
 	.infolabel {
-		background-color:  #043656;
 		padding: 15px 10px ;
 		
-		border-left: 5px solid #AD6509;
-		border-top: 5px solid #AD6509;
-		border-right: 5px solid #EAA044;
-		border-bottom: 5px solid #EAA044;
+		border-left: 5px solid #666666;
+		border-top: 5px solid #666666;
+		border-right: 5px solid #666666;
+		border-bottom: 5px solid #666666;
 		text-align: center;
 
 		color: white;
@@ -171,6 +163,7 @@ body {
 	}
 	#stats .infolabel {
 		height: 295px;
+		padding: 20px 50px;
 	}
 
 			.zone {
@@ -226,21 +219,21 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 
 	}
 
-
-#heartrate {
-	margin-top: 10px;
-	font-size: 30px;
-	font-family: 'Noto Sans Mono';
-	display: inline-block;
+.livestat {
+	color: #BBBBBB;
+	width: 33%;
+	float: left;
+	font-family: 'Exo 2', sans-serif;
+	font-weight: medium;
+	font-size: 40px;
 }
-#cadence {
-	display: inline-block;
-	font-size: 30px;
-	margin-left: 20px;
+.statLabel {
+	font-weight: bold;
+	font-size: 14px;
+	text-transform: uppercase;
+	color: #666666;
 }
-#powerzone { 
-	width: 400px;
-	margin: 10px auto;
-	font-size: 30px;
+.dataDivider {
 	clear: both;
+
 }

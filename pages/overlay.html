@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Mono:wght@200;600&family=Noto+Sans:wght@200;300;600&family=Tourney&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:ital,wght@0,500;0,700;1,500;1,800&family=Noto+Sans+Mono:wght@200;600&family=Noto+Sans:wght@200;600&family=Tourney&display=swap" rel="stylesheet">
 
 <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 <script src="./script.js"></script>
@@ -29,29 +29,41 @@
 		</div></div>
 		<div id="stats" class="raised-section">
 			<div class="infolabel">
-				<div id="heartrate">
-					<i class="fa-solid fa-heart-pulse"></i>
-					<span id="current-hr"></span>
-				</div>
-				
-				<div id="powerzone">
-					Power: 
-					<span id="current-power">25</span> W
-					<div class="meter">
-							<div class="track"></div>
+				<div class="dataDivider"></div>
+				<div id="powerzone" class="livestat"> 
+					<div class="statValue">
+						<span id="current-power">25</span> W
+					</div>
+					<div class="statLabel">
+						Power
 					</div>
 				</div>
-				<div id="lap">
-					<div class="meter">
-								<div class="track"></div>
-						</div>
+				<div id="draft" class="livestat"> 
+					<div id="current-draft" class="statValue">
+					</div>
+					<div class="statLabel">
+						Draft
+					</div>
 				</div>
+				<div id="heartrate" class="livestat"> 
+					<div id="current-hr" class="statValue">
+					</div>
+					<div class="statLabel">
+						<i class="fa-solid fa-heart-pulse"></i> HR
+					</div>
+				</div>
+
 			</div>
+			<div class="dataDivider"></div>
 		</div>
 		<div id="roster" class="raised-section">
 
 			<div class="infolabel">
-				<ul></ul>
+				<table>
+					<th>
+						<td>Rider</td><td>Gap</td><td>Draft</td>
+					</th>
+					</table>
 			</div>
 		</div>
 	</div>
