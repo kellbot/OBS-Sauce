@@ -237,7 +237,7 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 	font-weight: medium;
 	font-size: 40px;
 }
-.statLabel {
+.statLabel, label {
 	font-weight: bold;
 	font-size: 14px;
 	text-transform: uppercase;
@@ -246,4 +246,15 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 .dataDivider {
 	clear: both;
 
+}
+#lap .meter {
+	position: relative;
+}
+.segments {
+	width: 400px;
+	height: 40px;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	border-radius: 15px;
 }

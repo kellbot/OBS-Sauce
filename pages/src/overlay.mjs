@@ -18,6 +18,7 @@ let sandbox = true;
 let nearbyData;
 let lastRefresh;
 let tbody;
+let lastUpdated = 0;
 
 
 function makeLazyGetter(cb) {
@@ -58,6 +59,14 @@ function getRoute(state) {
     return {};
 }
 
+function getEvent(state) {
+    if (state.eventSubgroupId) {
+        const sg = lazyGetSubgroup(state.eventSubgroupId);
+        if (sg) return sg;
+    }
+    return false;
+}
+
 function toHoursAndMinutes(totalSeconds) {
     const totalMinutes = Math.floor(totalSeconds / 60);
   
@@ -74,26 +83,101 @@ function renderStats(watching){
     const power = watching.state.power;
     const draft = watching.state.draft;
     
-    let courseId = watching.state.courseId;
 
-    let worldDesc = common.courseToNames[courseId];
+    //refresh these things less often
+    let refreshInterval = 9900;
+    if (Date.now() - lastUpdated > refreshInterval){
+        lastUpdated = Date.now();
+        let worldDesc; 
+        //event info
+        let eventTitle = doc.querySelector('#event-info .infolabel').innerHTML;
+        if (watching.state.eventSubgroupId) {
+            let event = getEvent(watching.state)
+            eventTitle = event.name;
+            let leadInPCT = event.route.leadinDistanceInMeters / event.route.distanceInMeters * 100;
+            let lapPCT = (100 - leadInPCT) / event.laps;
+            
+            let segments = [];
 
-    let route = getRoute(watching.state);
-    if (route.name) worldDesc += ": " + route.name;
+            let sprintData = [{'start': 3600, 'end': 3900},{'start': 8700, 'end':9000}];
+            let sprints = [];
+            sprintData.forEach(data => {
+                for(let i = 0; i < event.laps; i++ ){
+
+                    sprints.push({'start' : data.start + event.route.distanceInMeters * (i), 'end':data.end + event.route.distanceInMeters * (i) });
+                }
+            });
+            sprints.sort((a,b) => a.start - b.start);
+            console.log(sprints);
+
+            if (leadInPCT > 0) {
+                let segment = leadInPCT;
+                segments.push(segment);
+            }
+            for (let i = 0; i < event.laps; i++){
+                let segment = lapPCT;
+                segments.push(segment);
+            }
+            const trackOverlay = doc.querySelector('#lap .meter .segments');
+            //Create the gradient
+            let barColor ='#008DE300';
+
+            let gradient = `linear-gradient(to right, ${barColor} 0%`;
+            for(let i = 0; i < segments.length; i++){
+                gradient += `,${barColor} ${segments[i]}%, #FFFFFF55 ${segments[i]}% ${segments[i]+1}%, ${barColor} ${segments[i]+1}%`;
+            }
+            gradient += `)`;
+
+            let sprintOverlay = `linear-gradient(to right, ${barColor} 0%`;
+            for(let i = 0; i < sprints.length; i++){
+                let sprint = sprints[i];
+                let startRoutePCT = leadInPCT + sprint.start / (event.route.distanceInMeters * event.laps) * 100;
+                let startPCT = startRoutePCT;
+                let endRoutePCT = leadInPCT + sprint.end / (event.route.distanceInMeters * event.laps) * 100;
+                let endPCT = endRoutePCT;
+                
+                sprintOverlay +=`,${barColor} ${startPCT}%, #55FF5555 ${startPCT}% ${endPCT}%, ${barColor} ${endPCT}%`;
+
+            }
+            sprintOverlay += `)`;
+
+            trackOverlay.style.backgroundImage = gradient + ', ' + sprintOverlay;
+            
+            let courseId = watching.state.courseId;
+
+            worldDesc = common.courseToNames[courseId] + ": " + event.route.name;
+
+
+            console.log(event);
+
+        } else {
+            let courseId = watching.state.courseId;
+
+            worldDesc = common.courseToNames[courseId];
+    
+            let route = getRoute(watching.state);
+            if (route.name) worldDesc += ": " + route.name;
+        }
+        
+
+        doc.querySelector('#event-info .infolabel').innerHTML = eventTitle;
+        
+        doc.querySelector('#course-name .scrollbox').innerHTML = worldDesc;// + ": " + route.name;
+    }
 
     let riderTime = toHoursAndMinutes(watching.stats.elapsedTime);
-    let courseProgress = watching.state.progress;
+    let courseProgress = watching.state.progress * 100;
 
     doc.querySelector('#timer .infolabel').innerHTML = 
         riderTime.h + ":" + riderTime.m.toString().padStart(2,0) + ":" + riderTime.s.toString().padStart(2,0);
 
 
-    doc.querySelector('#course-name .scrollbox').innerHTML = worldDesc;// + ": " + route.name;
     doc.querySelector('#lap .track').style.width = courseProgress + "%";
     doc.querySelector('#current-hr').innerHTML = hrvalue;
     doc.querySelector('#current-power').innerHTML =  power;
     doc.querySelector('#current-draft').innerHTML = draft + "%";
 
+    //onsole.log(watching);
 }
 
 async function main() {
@@ -135,9 +219,15 @@ async function main() {
 
 }
 
+
 function updateRow(rider){
     let gap = toHoursAndMinutes(rider.gap);
-    let html = '<tr><td class="name">' + rider.athlete.fullname.substring(0,20)+ "</td><td class='monotime'>" + gap.m + ":" + gap.s.toString().padStart(2,0) + "</td><td class='draft monotime'>" + rider.state.draft + "%</td></tr>";
+    let nameString = '<td class="name">' + rider.athlete.fullname.substring(0,20)+ "</td>";
+    let placeString = '<td></td>';
+    if (rider.state.eventSubgroupId) {
+        placeString = '<td class="event-place">' + rider.eventPosition + '</td>';
+    }
+    let html = `<tr>${placeString}${nameString}<td class='monotime'>${gap.m}:${gap.s.toString().padStart(2, 0)}</td><td class='draft monotime'>${rider.state.draft}%</td></tr>`;
     return html;
 }
 
