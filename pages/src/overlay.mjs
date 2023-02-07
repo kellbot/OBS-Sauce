@@ -1,7 +1,6 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 
-
 const doc = document.documentElement;
 let gameConnection;
 
@@ -21,7 +20,7 @@ let team = [
 let knownCourses = {
     
     46799750 : 
-        [{'start': 8200, 'end': 8800}],
+       [{'start': 8200, 'end': 8800}],
     
     1234567 : 
         [{'start': 3600, 'end': 3900},{'start': 8700, 'end':9000}],
@@ -35,9 +34,59 @@ let nearbyData;
 let lastRefresh;
 let tbody;
 let lastUpdated = 0;
-let ttt_mode = false;
+let ttt_mode = true;
 let leader_distance; //used in TTT mode
+let activeRider;
 
+
+
+const config = {
+    type: 'line',
+    data: {
+      datasets: [
+        {
+          label: 'Power Output',
+          borderColor: 'rgb(255, 99, 132)',
+          data: [],
+          
+        pointRadius: 0,
+        },
+        {
+          data: []
+        }
+      ]
+    },
+    options: {
+      scales: {
+        x: {
+           type: 'realtime',
+          realtime: {
+            delay: 2000,
+            
+            duration: 1000 * 60 * 5,
+            onRefresh: chart => {
+              chart.data.datasets.forEach(dataset => {
+                dataset.data.push({
+                  x: Date.now(),
+                  y: activeRider.state.power
+                });
+              });
+            }
+          }
+        },
+        y: {
+            suggestedMin: 0,
+            suggestedMax: 400
+        }
+      },
+      
+      maintainAspectRatio: false,
+    }
+  };
+//   const myChart = new Chart(
+//     document.getElementById('powerchart'),
+//     config
+//   );
 
 function makeLazyGetter(cb) {
     const getting = {};
@@ -68,7 +117,6 @@ function getEvent(state) {
     if (state.eventSubgroupId) {
         const sg = lazyGetSubgroup(state.eventSubgroupId);
         
-        console.log(sg)
         if (sg) return sg;
     
     }
@@ -114,7 +162,7 @@ function renderStats(watching){
             eventTitle = event.name;
 
             //overlay for courses we know about
-            if(currentRoute.id in knownCourses ) {
+            if(currentRoute && currentRoute.id in knownCourses ) {
                 let leadInPCT = event.route.leadinDistanceInMeters / event.route.distanceInMeters * 100;
                 let lapPCT = (100 - leadInPCT) / event.laps;
                 
@@ -206,7 +254,7 @@ function renderStats(watching){
 async function main() {
     let refresh;
     const setRefresh = () => {
-        refresh = (5) * 1000 - 100; // within 100ms is fine.
+        refresh = (1) * 1000 - 100; // within 100ms is fine.
     };
     
     console.log("Sauce Version:", await common.rpc.getVersion());
@@ -220,6 +268,7 @@ async function main() {
         if(watching.athleteId !== athleteId) {
             athleteId = watching.athleteId;
         }
+        //activeRider = watching;
         renderStats(watching);
 
     });
@@ -246,16 +295,16 @@ async function main() {
 function updateRow(rider){
     let gap_raw;
     let gap_string;
-    if (ttt_mode) {
-        gap_raw = leader_distance - rider.state.distance;
-        gap_string = `${gap.raw} m`;
-    } else {
+    // if (ttt_mode) {
+    //     gap_raw = leader_distance - rider.state.distance;
+    //     gap_string = `${gap.raw} m`;
+    // } else {
         gap_raw = rider.gap;
 
         let gap = toHoursAndMinutes(rider.gap);
         gap_string = `${gap.m}:${gap.s.toString().padStart(2, 0)}`;
 
-    }
+    // }
     let nameString = '<td class="name">' + rider.athlete.fullname.substring(0,20)+ "</td>";
     //let placeString = '<td></td>';
     // if (rider.state.eventSubgroupId) {
@@ -270,25 +319,29 @@ function renderRoster(data){
     tbody = doc.querySelector('#roster-table tbody'); 
     let riders;
 
-    if (ttt_mode) {
-        data.sort((a,b) => b.distance - b.distance);
-        riders = data;
-        leader_distance = riders[0].state.distance;
-    } else {
+    // if (ttt_mode) {
+    //     data.sort((a,b) => b.distance - b.distance);
+    //     riders = data;
+    //     leader_distance = riders[0].state.distance;
+    // } else {
         data.sort((a,b) => a.gap - b.gap);    
         const centerIdx = data.findIndex(x => x.watching); //find where we are in the data
-        riders = data.slice(centerIdx-3, centerIdx+3); //get two on either side of us 
+        riders = data;
+        //riders = data.slice(centerIdx-3, centerIdx+3); //get two on either side of us 
     
-    }
+    // }
 
     //Would be nice to update rather than nuke this
-    if (riders.length > 0) tbody.innerHTML = '';
-    for (let i = 0; i < riders.length; i++) {
-        let rider = riders[i];
-        const tr = document.createElement('tr');
-        tr.innerHTML = updateRow(rider);
-            tbody.appendChild(tr);
-    } 
+    if (riders.length > 0) {
+        tbody.innerHTML = '';
+        for (let i = 0; i < riders.length; i++) {
+            let rider = riders[i];
+            const tr = document.createElement('tr');
+            tr.innerHTML = updateRow(rider);
+                tbody.appendChild(tr);
+        } 
+    }
+
 
    
 }

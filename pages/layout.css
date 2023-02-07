@@ -46,7 +46,7 @@ body {
 
 /* Event / Course Heading */
 #event-info {
-	font-size: 40px;
+	font-size: 25px;
 	padding: 5px;
 	padding-top: 10px;
 	font-weight: 600;
@@ -55,7 +55,7 @@ body {
 #course-name { 
 							
 	font-weight: 600;
-	font-size: 25px;
+	font-size: 15px;
 		margin-right: 3px;
 
 }
@@ -161,7 +161,7 @@ body {
 		text-align: right;
 	}
 	#stats .section {
-		height: 295px;
+		height: 400px;
 		padding: 20px 50px;
 	}
 
@@ -253,4 +253,8 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 	top: 5px;
 	left: 5px;
 	border-radius: 15px;
+}
+
+powerChart {
+	height: 100px;
 }
