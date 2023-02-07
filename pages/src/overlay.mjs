@@ -8,10 +8,13 @@ let gameConnection;
 
 let team = [
     {'athleteId': 1354412, 'displayName' : "J. Blackbourn" , 'data' : {}},
+    {'athleteId': 3478319, 'displayName' : "Badger" , 'data' : {}},
     {'athleteId': 3658694, 'displayName' : "M. Brown" , 'data' : {}},
-    {'athleteId': 408281, 'displayName' : "G.Jones" , 'data' : {}},
+//   {'athleteId': 408281, 'displayName' : "G.Jones" , 'data' : {}},
     {'athleteId': 1331113, 'displayName' : "J. Grant" , 'data' : {}},
     {'athleteId': 1150050, 'displayName' : "K. Orange" , 'data' : {}},
+    {'athleteId': 2570152, 'displayName' : "S. Knowles" , 'data' : {}},
+
 ]
 
 let sandbox = true;
@@ -19,6 +22,8 @@ let nearbyData;
 let lastRefresh;
 let tbody;
 let lastUpdated = 0;
+let ttt_mode = false;
+let leader_distance; //used in TTT mode
 
 
 function makeLazyGetter(cb) {
@@ -45,19 +50,6 @@ function makeLazyGetter(cb) {
 }
 
 const lazyGetSubgroup = makeLazyGetter(id => common.rpc.getEventSubgroup(id));
-const lazyGetRoute = makeLazyGetter(id => common.rpc.getRoute(id));
-
-function getRoute(state) {
-    if (state.eventSubgroupId) {
-        const sg = lazyGetSubgroup(state.eventSubgroupId);
-        if (sg) {
-            return {route: sg.route, laps: sg.laps};
-        }
-    } else if (state.routeId) {
-        return {route: lazyGetRoute(state.routeId), laps: 0};
-    }
-    return {};
-}
 
 function getEvent(state) {
     if (state.eventSubgroupId) {
@@ -65,6 +57,14 @@ function getEvent(state) {
         if (sg) return sg;
     }
     return false;
+}
+
+const _fetchingRoutes = new Map();
+async function getRoute(id) {
+    if (!_fetchingRoutes.has(id)) {
+        _fetchingRoutes.set(id, common.rpc.getRoute(id));
+    }
+    return await _fetchingRoutes.get(id);
 }
 
 function toHoursAndMinutes(totalSeconds) {
@@ -90,85 +90,85 @@ function renderStats(watching){
         lastUpdated = Date.now();
         let worldDesc; 
         //event info
-        let eventTitle = doc.querySelector('#event-info .infolabel').innerHTML;
+        let eventTitle = doc.querySelector('#event-name').innerHTML;
         if (watching.state.eventSubgroupId) {
             let event = getEvent(watching.state)
             eventTitle = event.name;
             let leadInPCT = event.route.leadinDistanceInMeters / event.route.distanceInMeters * 100;
             let lapPCT = (100 - leadInPCT) / event.laps;
             
-            let segments = [];
+            // let segments = [];
 
-            let sprintData = [{'start': 3600, 'end': 3900},{'start': 8700, 'end':9000}];
-            let sprints = [];
-            sprintData.forEach(data => {
-                for(let i = 0; i < event.laps; i++ ){
+            // let sprintData = [{'start': 3600, 'end': 3900},{'start': 8700, 'end':9000}];
+            // let sprints = [];
+            // sprintData.forEach(data => {
+            //     for(let i = 0; i < event.laps; i++ ){
 
-                    sprints.push({'start' : data.start + event.route.distanceInMeters * (i), 'end':data.end + event.route.distanceInMeters * (i) });
-                }
-            });
-            sprints.sort((a,b) => a.start - b.start);
-            console.log(sprints);
+            //         sprints.push({'start' : data.start + event.route.distanceInMeters * (i), 'end':data.end + event.route.distanceInMeters * (i) });
+            //     }
+            // });
+            // sprints.sort((a,b) => a.start - b.start);
+            // console.log(sprints);
 
-            if (leadInPCT > 0) {
-                let segment = leadInPCT;
-                segments.push(segment);
-            }
-            for (let i = 0; i < event.laps; i++){
-                let segment = lapPCT;
-                segments.push(segment);
-            }
-            const trackOverlay = doc.querySelector('#lap .meter .segments');
-            //Create the gradient
-            let barColor ='#008DE300';
+            // if (leadInPCT > 0) {
+            //     let segment = leadInPCT;
+            //     segments.push(segment);
+            // }
+            // for (let i = 0; i < event.laps; i++){
+            //     let segment = lapPCT;
+            //     segments.push(segment);
+            // }
+            // const trackOverlay = doc.querySelector('#lap .meter .segments');
+            // //Create the gradient
+            // let barColor ='#008DE300';
 
-            let gradient = `linear-gradient(to right, ${barColor} 0%`;
-            for(let i = 0; i < segments.length; i++){
-                gradient += `,${barColor} ${segments[i]}%, #FFFFFF55 ${segments[i]}% ${segments[i]+1}%, ${barColor} ${segments[i]+1}%`;
-            }
-            gradient += `)`;
+            // let gradient = `linear-gradient(to right, ${barColor} 0%`;
+            // for(let i = 0; i < segments.length; i++){
+            //     gradient += `,${barColor} ${segments[i]}%, #FFFFFF55 ${segments[i]}% ${segments[i]+1}%, ${barColor} ${segments[i]+1}%`;
+            // }
+            // gradient += `)`;
 
-            let sprintOverlay = `linear-gradient(to right, ${barColor} 0%`;
-            for(let i = 0; i < sprints.length; i++){
-                let sprint = sprints[i];
-                let startRoutePCT = leadInPCT + sprint.start / (event.route.distanceInMeters * event.laps) * 100;
-                let startPCT = startRoutePCT;
-                let endRoutePCT = leadInPCT + sprint.end / (event.route.distanceInMeters * event.laps) * 100;
-                let endPCT = endRoutePCT;
+            // let sprintOverlay = `linear-gradient(to right, ${barColor} 0%`;
+            // for(let i = 0; i < sprints.length; i++){
+            //     let sprint = sprints[i];
+            //     let startRoutePCT = leadInPCT + sprint.start / (event.route.distanceInMeters * event.laps) * 100;
+            //     let startPCT = startRoutePCT;
+            //     let endRoutePCT = leadInPCT + sprint.end / (event.route.distanceInMeters * event.laps) * 100;
+            //     let endPCT = endRoutePCT;
                 
-                sprintOverlay +=`,${barColor} ${startPCT}%, #55FF5555 ${startPCT}% ${endPCT}%, ${barColor} ${endPCT}%`;
+            //     sprintOverlay +=`,${barColor} ${startPCT}%, #55FF5555 ${startPCT}% ${endPCT}%, ${barColor} ${endPCT}%`;
 
-            }
-            sprintOverlay += `)`;
+            // }
+            // sprintOverlay += `)`;
 
-            trackOverlay.style.backgroundImage = gradient + ', ' + sprintOverlay;
+            // trackOverlay.style.backgroundImage = gradient + ', ' + sprintOverlay;
             
             let courseId = watching.state.courseId;
 
             worldDesc = common.courseToNames[courseId] + ": " + event.route.name;
 
 
-            console.log(event);
+            console.log(watching);
 
         } else {
             let courseId = watching.state.courseId;
 
             worldDesc = common.courseToNames[courseId];
     
-            let route = getRoute(watching.state);
+            let route = getRoute(watching.state.eventSubgroupId);
             if (route.name) worldDesc += ": " + route.name;
         }
         
 
-        doc.querySelector('#event-info .infolabel').innerHTML = eventTitle;
+        doc.querySelector('#event-name').innerHTML = eventTitle;
         
-        doc.querySelector('#course-name .scrollbox').innerHTML = worldDesc;// + ": " + route.name;
+        doc.querySelector('#course-name').innerHTML = worldDesc;// + ": " + route.name;
     }
 
     let riderTime = toHoursAndMinutes(watching.stats.elapsedTime);
     let courseProgress = watching.state.progress * 100;
 
-    doc.querySelector('#timer .infolabel').innerHTML = 
+    doc.querySelector('#timer .section').innerHTML = 
         riderTime.h + ":" + riderTime.m.toString().padStart(2,0) + ":" + riderTime.s.toString().padStart(2,0);
 
 
@@ -204,7 +204,7 @@ async function main() {
     setRefresh();
     let lastRefresh = 0;
     common.subscribe('nearby', data => {
-        if (!sandbox) {
+        if (ttt_mode) {
             data = data.filter(x => x.watching || (x.athlete && x.athlete.marked));
         }
         nearbyData = data;
@@ -221,47 +221,52 @@ async function main() {
 
 
 function updateRow(rider){
-    let gap = toHoursAndMinutes(rider.gap);
-    let nameString = '<td class="name">' + rider.athlete.fullname.substring(0,20)+ "</td>";
-    let placeString = '<td></td>';
-    if (rider.state.eventSubgroupId) {
-        placeString = '<td class="event-place">' + rider.eventPosition + '</td>';
+    let gap_raw;
+    let gap_string;
+    if (ttt_mode) {
+        gap_raw = leader_distance - rider.state.distance;
+        gap_string = `${gap.raw} m`;
+    } else {
+        gap_raw = rider.gap;
+
+        let gap = toHoursAndMinutes(rider.gap);
+        gap_string = `${gap.m}:${gap.s.toString().padStart(2, 0)}`;
+
     }
-    let html = `<tr>${placeString}${nameString}<td class='monotime'>${gap.m}:${gap.s.toString().padStart(2, 0)}</td><td class='draft monotime'>${rider.state.draft}%</td></tr>`;
+    let nameString = '<td class="name">' + rider.athlete.fullname.substring(0,20)+ "</td>";
+    //let placeString = '<td></td>';
+    // if (rider.state.eventSubgroupId) {
+    //     placeString = '<td class="event-place">' + rider.eventPosition + '</td>';
+    // }
+    let html = `<tr>${nameString}<td class='monotime'>${gap_string}</td><td class='draft monotime'>${rider.state.draft}%</td></tr>`;
     return html;
 }
 
 let frames = 0;
 function renderRoster(data){
     tbody = doc.querySelector('#roster-table tbody'); 
+    let riders;
 
-    data.sort((a,b) => a.gap - b.gap);
-    const centerIdx = data.findIndex(x => x.watching); //find where we are in the data
-    let riders = data.slice(centerIdx-3, centerIdx+3); //get two on either side of us 
-
-            //initial population
-    if (tbody.querySelectorAll('tr').length < 1) {
-        for (let i = 0; i < riders.length; i++) {
-            let rider = riders[i];
-            const tr = document.createElement('tr');
-            tr.innerHTML = updateRow(rider);
-             tbody.appendChild(tr);
-        } 
+    if (ttt_mode) {
+        data.sort((a,b) => b.distance - b.distance);
+        riders = data;
+        leader_distance = riders[0].state.distance;
     } else {
-        let rows = tbody.querySelectorAll('tr');
-
-        for(let i = 0; i < riders.length; i++){
-            let rider = riders[i];
-            if(i < rows.length) {
-                rows[i].innerHTML = updateRow(rider);
-            } else {
-                const tr = document.createElement('tr');
-                tr.innerHTML = updateRow(rider);
-                tbody.appendChild(tr);
-            }
-        }
-        
+        data.sort((a,b) => a.gap - b.gap);    
+        const centerIdx = data.findIndex(x => x.watching); //find where we are in the data
+        riders = data.slice(centerIdx-3, centerIdx+3); //get two on either side of us 
+    
     }
+
+    //Would be nice to update rather than nuke this
+    if (riders.length > 0) tbody.innerHTML = '';
+    for (let i = 0; i < riders.length; i++) {
+        let rider = riders[i];
+        const tr = document.createElement('tr');
+        tr.innerHTML = updateRow(rider);
+            tbody.appendChild(tr);
+    } 
+
    
 }
 
