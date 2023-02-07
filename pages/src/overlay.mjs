@@ -1,11 +1,13 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
 
+
 const doc = document.documentElement;
+
 let gameConnection;
 
 
-let team = [
+let ostrich = [
     {'athleteId': 1354412, 'displayName' : "J. Blackbourn" , 'data' : {}},
     {'athleteId': 3478319, 'displayName' : "Badger" , 'data' : {}},
     {'athleteId': 3658694, 'displayName' : "M. Brown" , 'data' : {}},
@@ -14,8 +16,19 @@ let team = [
     {'athleteId': 1150050, 'displayName' : "K. Orange" , 'data' : {}},
     {'athleteId': 2570152, 'displayName' : "S. Knowles" , 'data' : {}},
 
-]
+];
 
+let hoss = [
+    {'athleteId': 508078, 'displayName' : "" , 'data' : {}},
+    {'athleteId': 3429938, 'displayName' : "" , 'data' : {}},
+    {'athleteId': 3109924, 'displayName' : "" , 'data' : {}},
+    {'athleteId': 5507994, 'displayName' : "" , 'data' : {}},
+    {'athleteId': 3478319, 'displayName' : "" , 'data' : {}},
+    {'athleteId': 52227, 'displayName' : "" , 'data' : {}},
+]
+;
+
+let team = hoss;
 
 let knownCourses = {
     
@@ -34,11 +47,38 @@ let nearbyData;
 let lastRefresh;
 let tbody;
 let lastUpdated = 0;
-let ttt_mode = true;
+let ttt_mode = false;
 let leader_distance; //used in TTT mode
 let activeRider;
 
+let myChart;
 
+var GradientBgPlugin = {
+    beforeDraw: function(chart, args, options) {
+      const ctx = chart.ctx;
+      const canvas = chart.canvas;
+      const chartArea = chart.chartArea;
+  
+      // Chart background
+      var gradientBack = canvas.getContext("2d").createLinearGradient(0, 0, 0, 255);
+      gradientBack.addColorStop(0, "rgb(100, 53, 89)");
+      gradientBack.addColorStop(0.07, "rgb(100, 53, 89)");
+      gradientBack.addColorStop(0.07, "rgb(122, 65, 109)");
+      gradientBack.addColorStop(0.30, "rgb(122, 65, 109)");
+      gradientBack.addColorStop(0.30, "rgb(145, 77, 128)");
+      gradientBack.addColorStop(0.52, "rgb(145, 77, 128)");
+      gradientBack.addColorStop(0.52, "rgb(167, 89, 148)");
+      gradientBack.addColorStop(0.75, "rgb(167, 89, 148)");
+      gradientBack.addColorStop(0.75, "rgb(145, 77, 128)");
+      gradientBack.addColorStop(0.96, "rgb(214, 178, 205)");
+      gradientBack.addColorStop(0.96, "rgb(237, 222, 234)");
+      gradientBack.addColorStop(1, "rgb(237, 222, 234)");
+  
+      ctx.fillStyle = gradientBack;
+      ctx.fillRect(chartArea.left, chartArea.bottom,
+        chartArea.right - chartArea.left, chartArea.top - chartArea.bottom);
+    }
+  };
 
 const config = {
     type: 'line',
@@ -46,21 +86,27 @@ const config = {
       datasets: [
         {
           label: 'Power Output',
-          borderColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(165, 165, 165)',
           data: [],
           
         pointRadius: 0,
         },
-        {
-          data: []
-        }
       ]
     },
     options: {
+    plugins: {
+            streaming: {
+                frameRate: 5   // chart is drawn 1 times every second
+            },
+            legend: {
+                display: false,
+            }
+        },
       scales: {
         x: {
            type: 'realtime',
-          realtime: {
+           display: false,
+            realtime: {
             delay: 2000,
             
             duration: 1000 * 60 * 5,
@@ -68,7 +114,8 @@ const config = {
               chart.data.datasets.forEach(dataset => {
                 dataset.data.push({
                   x: Date.now(),
-                  y: activeRider.state.power
+                  y: activeRider.state.power,
+                  borderColor: 'rgb(54, 162, 235)',
                 });
               });
             }
@@ -76,17 +123,17 @@ const config = {
         },
         y: {
             suggestedMin: 0,
-            suggestedMax: 400
+            suggestedMax: 300
         }
       },
       
       maintainAspectRatio: false,
-    }
+    },
+    plugins: [
+        GradientBgPlugin]
   };
-//   const myChart = new Chart(
-//     document.getElementById('powerchart'),
-//     config
-//   );
+
+ 
 
 function makeLazyGetter(cb) {
     const getting = {};
@@ -143,11 +190,23 @@ function toHoursAndMinutes(totalSeconds) {
 }
   
 function renderStats(watching){
+    console.log(watching);
     const hrvalue = watching.state.heartrate;
     const ftp = watching.athlete.ftp;
     const power = watching.state.power;
     const draft = watching.state.draft;
     
+
+    
+    if(!myChart) {
+        myChart = new Chart(
+            document.getElementById('powerchart'),
+            config
+        );
+    }
+
+    myChart.options.scales.y.suggestedMin = watching.athlete.ftp * 0.5;
+    myChart.options.scales.y.suggestedMax = watching.athlete.ftp * 1.2;
 
     //refresh these things less often
     let refreshInterval = 9900;
@@ -244,7 +303,7 @@ function renderStats(watching){
     doc.querySelector('#current-hr').innerHTML = hrvalue;
     doc.querySelector('#current-power').innerHTML =  power;
     doc.querySelector('#current-draft').innerHTML = draft + "%";
-    doc.querySelector('#speed-1m').innerHTML = watching.stats.speed.smooth[60].toFixed(1);
+    if (watching.stats.speed.smooth[60]) doc.querySelector('#speed-1m').innerHTML = watching.stats.speed.smooth[60].toFixed(1);
     doc.querySelector('#speed-a').innerHTML = watching.stats.speed.avg.toFixed(1);
 
 
@@ -268,10 +327,18 @@ async function main() {
         if(watching.athleteId !== athleteId) {
             athleteId = watching.athleteId;
         }
-        //activeRider = watching;
+        activeRider = watching;
         renderStats(watching);
 
     });
+
+    //Mark the team
+    for(const i in team ){
+        let teammateId = team[i].athleteId;
+        const teammate = await common.rpc.getAthlete(teammateId, {refresh: true});
+        console.log(teammate);
+        if (teammate) await common.rpc.updateAthlete(teammateId, {marked: true});
+    }
 
     setRefresh();
     let lastRefresh = 0;
@@ -295,22 +362,26 @@ async function main() {
 function updateRow(rider){
     let gap_raw;
     let gap_string;
-    // if (ttt_mode) {
-    //     gap_raw = leader_distance - rider.state.distance;
-    //     gap_string = `${gap.raw} m`;
-    // } else {
-        gap_raw = rider.gap;
+    let distance_string;
 
-        let gap = toHoursAndMinutes(rider.gap);
-        gap_string = `${gap.m}:${gap.s.toString().padStart(2, 0)}`;
+    gap_raw = rider.gap;
 
-    // }
+    let gap = toHoursAndMinutes(rider.gap);
+    if(Number.isInteger(leader_distance) && Number.isInteger(rider.state.distance)) {
+        distance_string = `${Math.abs(leader_distance - rider.state.distance).toString().padStart(3, "\u00A0")}m`;
+        leader_distance = rider.state.distance
+    }
+
+    gap_string = `${gap.m}:${gap.s.toString().padStart(2, 0)}`;
+
+    
+
     let nameString = '<td class="name">' + rider.athlete.fullname.substring(0,20)+ "</td>";
     //let placeString = '<td></td>';
     // if (rider.state.eventSubgroupId) {
     //     placeString = '<td class="event-place">' + rider.eventPosition + '</td>';
     // }
-    let html = `<tr>${nameString}<td class='monotime'>${gap_string}</td><td class='draft monotime'>${rider.state.draft}%</td></tr>`;
+    let html = `<tr>${nameString}<td class='monotime'>${gap_string} ${distance_string}</td><td class='draft monotime'>${rider.state.draft}%</td></tr>`;
     return html;
 }
 
@@ -319,17 +390,15 @@ function renderRoster(data){
     tbody = doc.querySelector('#roster-table tbody'); 
     let riders;
 
-    // if (ttt_mode) {
-    //     data.sort((a,b) => b.distance - b.distance);
-    //     riders = data;
-    //     leader_distance = riders[0].state.distance;
-    // } else {
-        data.sort((a,b) => a.gap - b.gap);    
+        data.sort((a,b) => a.distance - b.distance);    
         const centerIdx = data.findIndex(x => x.watching); //find where we are in the data
-        riders = data;
-        //riders = data.slice(centerIdx-3, centerIdx+3); //get two on either side of us 
-    
-    // }
+        if (ttt_mode) {
+            riders = data;          
+        } else {
+            riders = data.slice(centerIdx-3, centerIdx+3); //get two on either side of us 
+        }
+        
+        if (riders.length > 1) leader_distance = riders[0].state.distance;
 
     //Would be nice to update rather than nuke this
     if (riders.length > 0) {
