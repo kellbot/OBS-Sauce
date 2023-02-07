@@ -176,7 +176,7 @@ body {
 		border-radius: 15px;
 		width: 100%;
 		color: white;
-		text-align: right;
+		text-align: left;
 		font-size: 20px;
 
 
@@ -232,8 +232,15 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 	text-transform: uppercase;
 	color: #666666;
 }
+.trackLabel {
+	padding-left: 15px;
+	padding-top: 5px;
+	position: relative;
+	z-index: 1000;
+}
 .dataDivider {
 	clear: both;
+	height:10px;
 
 }
 #lap .meter {

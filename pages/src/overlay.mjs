@@ -17,7 +17,20 @@ let team = [
 
 ]
 
-let sandbox = true;
+
+let knownCourses = {
+    
+    46799750 : 
+        [{'start': 8200, 'end': 8800}],
+    
+    1234567 : 
+        [{'start': 3600, 'end': 3900},{'start': 8700, 'end':9000}],
+    
+    620436060 : [{'start': 2300, 'end': 2700},{'start': 3700, 'end':4900}],
+    
+}
+
+let currentRoute;
 let nearbyData;
 let lastRefresh;
 let tbody;
@@ -54,8 +67,12 @@ const lazyGetSubgroup = makeLazyGetter(id => common.rpc.getEventSubgroup(id));
 function getEvent(state) {
     if (state.eventSubgroupId) {
         const sg = lazyGetSubgroup(state.eventSubgroupId);
+        
+        console.log(sg)
         if (sg) return sg;
+    
     }
+
     return false;
 }
 
@@ -93,62 +110,64 @@ function renderStats(watching){
         let eventTitle = doc.querySelector('#event-name').innerHTML;
         if (watching.state.eventSubgroupId) {
             let event = getEvent(watching.state)
+            currentRoute = event.route;
             eventTitle = event.name;
-            let leadInPCT = event.route.leadinDistanceInMeters / event.route.distanceInMeters * 100;
-            let lapPCT = (100 - leadInPCT) / event.laps;
-            
-            // let segments = [];
 
-            // let sprintData = [{'start': 3600, 'end': 3900},{'start': 8700, 'end':9000}];
-            // let sprints = [];
-            // sprintData.forEach(data => {
-            //     for(let i = 0; i < event.laps; i++ ){
-
-            //         sprints.push({'start' : data.start + event.route.distanceInMeters * (i), 'end':data.end + event.route.distanceInMeters * (i) });
-            //     }
-            // });
-            // sprints.sort((a,b) => a.start - b.start);
-            // console.log(sprints);
-
-            // if (leadInPCT > 0) {
-            //     let segment = leadInPCT;
-            //     segments.push(segment);
-            // }
-            // for (let i = 0; i < event.laps; i++){
-            //     let segment = lapPCT;
-            //     segments.push(segment);
-            // }
-            // const trackOverlay = doc.querySelector('#lap .meter .segments');
-            // //Create the gradient
-            // let barColor ='#008DE300';
-
-            // let gradient = `linear-gradient(to right, ${barColor} 0%`;
-            // for(let i = 0; i < segments.length; i++){
-            //     gradient += `,${barColor} ${segments[i]}%, #FFFFFF55 ${segments[i]}% ${segments[i]+1}%, ${barColor} ${segments[i]+1}%`;
-            // }
-            // gradient += `)`;
-
-            // let sprintOverlay = `linear-gradient(to right, ${barColor} 0%`;
-            // for(let i = 0; i < sprints.length; i++){
-            //     let sprint = sprints[i];
-            //     let startRoutePCT = leadInPCT + sprint.start / (event.route.distanceInMeters * event.laps) * 100;
-            //     let startPCT = startRoutePCT;
-            //     let endRoutePCT = leadInPCT + sprint.end / (event.route.distanceInMeters * event.laps) * 100;
-            //     let endPCT = endRoutePCT;
+            //overlay for courses we know about
+            if(currentRoute.id in knownCourses ) {
+                let leadInPCT = event.route.leadinDistanceInMeters / event.route.distanceInMeters * 100;
+                let lapPCT = (100 - leadInPCT) / event.laps;
                 
-            //     sprintOverlay +=`,${barColor} ${startPCT}%, #55FF5555 ${startPCT}% ${endPCT}%, ${barColor} ${endPCT}%`;
+                let segments = [];
 
-            // }
-            // sprintOverlay += `)`;
+                let sprintData = knownCourses[currentRoute.id];
+                let sprints = [];
+                sprintData.forEach(data => {
+                    for(let i = 0; i < event.laps; i++ ){
 
-            // trackOverlay.style.backgroundImage = gradient + ', ' + sprintOverlay;
-            
+                        sprints.push({'start' : data.start + event.route.distanceInMeters * (i), 'end':data.end + event.route.distanceInMeters * (i) });
+                    }
+                });
+                sprints.sort((a,b) => a.start - b.start);
+                console.log(sprints);
+
+                if (leadInPCT > 0) {
+                    let segment = leadInPCT;
+                    segments.push(segment);
+                }
+                for (let i = 0; i < event.laps; i++){
+                    let segment = lapPCT;
+                    segments.push(segment);
+                }
+                const trackOverlay = doc.querySelector('#lap .meter .segments');
+                //Create the gradient
+                let barColor ='#008DE300';
+
+                let gradient = `linear-gradient(to right, ${barColor} 0%`;
+                for(let i = 0; i < segments.length; i++){
+                    gradient += `,${barColor} ${segments[i]}%, #FFFFFF55 ${segments[i]}% ${segments[i]+1}%, ${barColor} ${segments[i]+1}%`;
+                }
+                gradient += `)`;
+
+                let sprintOverlay = `linear-gradient(to right, ${barColor} 0%`;
+                for(let i = 0; i < sprints.length; i++){
+                    let sprint = sprints[i];
+                    let startRoutePCT = leadInPCT + sprint.start / (event.route.distanceInMeters * event.laps) * 100;
+                    let startPCT = startRoutePCT;
+                    let endRoutePCT = leadInPCT + sprint.end / (event.route.distanceInMeters * event.laps) * 100;
+                    let endPCT = endRoutePCT;
+                    
+                    sprintOverlay +=`,${barColor} ${startPCT}%, #55555555 ${startPCT}% ${endPCT}%, ${barColor} ${endPCT}%`;
+
+                }
+                sprintOverlay += `)`;
+
+                trackOverlay.style.backgroundImage = gradient + ', ' + sprintOverlay;
+            }
             let courseId = watching.state.courseId;
 
             worldDesc = common.courseToNames[courseId] + ": " + event.route.name;
 
-
-            console.log(watching);
 
         } else {
             let courseId = watching.state.courseId;
@@ -173,9 +192,13 @@ function renderStats(watching){
 
 
     doc.querySelector('#lap .track').style.width = courseProgress + "%";
+    doc.querySelector('#lap .trackLabel').innerHTML = (watching.state.distance/1000).toFixed(2) + " km";
     doc.querySelector('#current-hr').innerHTML = hrvalue;
     doc.querySelector('#current-power').innerHTML =  power;
     doc.querySelector('#current-draft').innerHTML = draft + "%";
+    doc.querySelector('#speed-1m').innerHTML = watching.stats.speed.smooth[60].toFixed(1);
+    doc.querySelector('#speed-a').innerHTML = watching.stats.speed.avg.toFixed(1);
+
 
     //onsole.log(watching);
 }
