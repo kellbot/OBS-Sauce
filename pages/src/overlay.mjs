@@ -141,6 +141,18 @@ function toHoursAndMinutes(totalSeconds) {
   
     return { h: hours, m: minutes, s: seconds };
 }
+
+function renderPZChart(statsObj){
+    let bars = doc.querySelectorAll('#power-stats .graphbar');
+    let data = statsObj.power.timeInZones;
+    for(let i=0; i < data.length; i++ ){
+        let zone = data[i];
+        let mins = zone.time;
+        let zonePCT = mins / statsObj.elapsedTime * 100;
+        bars[i].style.height = zonePCT + "%";
+        
+    }
+}
   
 function renderStats(watching){
     const hrvalue = watching.state.heartrate;
@@ -153,6 +165,10 @@ function renderStats(watching){
     let refreshInterval = 9900;
     if (Date.now() - lastUpdated > refreshInterval){
         lastUpdated = Date.now();
+
+        //powerzone stats info
+        renderPZChart(watching.stats);
+
         let worldDesc; 
         //event info
         let eventTitle = doc.querySelector('#event-name').innerHTML;

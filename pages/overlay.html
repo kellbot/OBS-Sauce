@@ -8,14 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:ital,wght@0,500;0,700;1,500;1,800&family=Noto+Sans+Mono:wght@200;600&family=Noto+Sans:wght@200;600&family=Tourney&display=swap" rel="stylesheet">
 
 <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+<script src="./script.js"></script>
 	<link href="./layout.css" rel="stylesheet" />
 
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2"></script>
-	<script src="https://cdn.jsdelivr.net/npm/luxon@1.27.0"></script>
-	<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
-	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0"></script>
-	
 	<script src="src/overlay.mjs" type="module"></script>
+
 </head>
 <body>
 <div id="container">
@@ -23,18 +20,15 @@
 	</div>
 	<div id="sidebar">
 		<div id="event-info" class="raised-section">
-			<div class="section">
-				<div id="event-name">Zwift
-				</div>
-				<div id="course-name">
-					Watopia</div>
-				</div>
+			<div class="infolabel">ZRL 3.4
+			</div>
 		</div>
-		
-		<div id="timer" class="raised-section"><div class="section">0:00:00
+		<div id="course-name" class="raised-section"><div class="infolabel">
+			<div class="scrollbox"></div></div></div>
+		<div id="timer" class="raised-section"><div class="infolabel">0:00:00
 		</div></div>
 		<div id="stats" class="raised-section">
-			<div class="section">
+			<div class="infolabel">
 				<div class="dataDivider"></div>
 				<div id="powerzone" class="livestat"> 
 					<div class="statValue">
@@ -62,30 +56,22 @@
 				<div id="lap">
 					<div class="meter">
 						<div class="segments"></div>
-						<div class="track"><div class="trackLabel">23</div></div>
+						<div class="track"></div>
 					</div>
 					
 					<label>Course Progress</label>
 				</div>
 				<div class="dataDivider"></div>
-				<div class="livestat"> 
-					<div id="speed-1m" class="statValue">
-					</div>
-					<div class="statLabel">
-						Speed - 1m
-					</div>
+				<div id="power-stats">
+					<div class="power-1 graphbar"></div>
+					<div class="power-2 graphbar"></div>
+					<div class="power-3 graphbar"></div>
+					<div class="power-4 graphbar"></div>
+					<div class="power-5 graphbar"></div>
+					<div class="power-6 graphbar"></div>
+					<div class="power-7 graphbar"></div>
+
 				</div>
-				<div class="livestat"> 
-					<div id="speed-a" class="statValue">
-					</div>
-					<div class="statLabel">
-						Speed - Avg
-					</div>
-				</div>
-				<div class="dataDivider"></div>
-				<div>
-					<canvas id="powerchart"></canvas>
-				  </div>
 			</div>
 			
 
@@ -96,11 +82,11 @@
 		</div>
 		<div id="roster" class="raised-section">
 
-			<div class="section">
+			<div class="infolabel">
 				<table id="roster-table">
 					<thead>
 						<tr>
-							<th>Rider</th><th class="right-heading">Gap</th><th class="right-heading">Draft</th>
+							<th>Place</th><th>Rider</th><th class="right-heading">Gap</th><th class="right-heading">Draft</th>
 						</tr>
 				
 				</thead>
@@ -115,7 +101,7 @@
 		<div id="zwift">
 		</div>
 		<div id="chat">
-			<div class="section"></div>
+			<div class="infolabel"></div>
 	</div>
 
 	</div>
