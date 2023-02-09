@@ -1,85 +1,74 @@
+/* Layout */
+
 body {
 	font-family: 'Noto Sans';
 }
+
 #container {
 	width: 1920px;
 	height: 1080px;
 	background-color: #222222;
 	position: relative;
 }
-	#zwift {
-		background-color: #666666;
-		width: 1280px;
-		height: 960px;
-		position: relative;
-		right: -20px;
-		top: 15px;
-		border: 5px solid #666666;
 
-	}
+#zwift {
+	background-color: #666666;
+	width: 1280px;
+	height: 960px;
+	position: relative;
+	right: -20px;
+	top: 15px;
+	border: 5px solid #666666;
 
-	#right-section{
-		position: absolute;
-		left: 590px;
-		top:0;
-		margin: 5px;
-		height: 1080px;
-		width: 1330px;
-	}
-	#chat .infolabel {
-		width: 1260px;
-		height: 45px;
-		left: 20px;
-		position: relative;
-		bottom: -10px;
-	}
-	.bumper-column {
-		border-right: 5px solid #111111;
-		border-left: 5px solid #111111;
-		width: 20px;
-		height: 1080px;
-	}
-	#event-info {
+}
+
+#right-section{
+	position: absolute;
+	left: 590px;
+	top:0;
+	margin: 5px;
+	height: 1080px;
+	width: 1330px;
+}
+#chat .section {
+	width: 1260px;
+	height: 45px;
+	left: 20px;
+	position: relative;
+	bottom: -10px;
+}
+.bumper-column {
+	border-right: 5px solid #111111;
+	border-left: 5px solid #111111;
+	width: 20px;
+	height: 1080px;
+}
+
+/* Event / Course Heading */
+#event-info {
+	font-size: 25px;
+	padding: 5px;
+	padding-top: 10px;
+	font-weight: 600;
 	
-		font-size: 60px;
-		font-family: 'Noto Sans';
-		padding: 5px;
-		padding-top: 10px;
-		text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.5);
-		
-	}
-	#course-name { 
-								
-		width: 280px;
-		font-family: 'Noto Sans';
-		font-weight: 600;
-		font-size: 35px;
-		float: left;
-			margin-right: 3px;
+}
+#course-name { 
+							
+	font-weight: 600;
+	font-size: 15px;
+		margin-right: 3px;
 
-	}
-	#course-name .infolabel {
+}
 
-			white-space: nowrap;
-			overflow: hidden;
-	}
-	.scrollbox{
-		animation: move 25s linear infinite;
-			display: inline-block;
-			padding-left: 100%;
-	}
-	@keyframes move {
-		0%   { transform: translate(0, 0); }
-		100% { transform: translate(-100%, 0); }
-	}
-	#timer {
-					
-		display: inline-block;
-		width: 225px;
-		font-family: 'Noto Sans Mono';
-		font-weight: 600;
-		font-size: 35px;
-	}
+
+#timer {
+				
+	display: inline-block;
+	width: 225px;
+	font-family: 'Noto Sans Mono';
+	font-weight: 600;
+	font-size: 35px;
+}
 	#sidebar {
 		position: absolute;
 		top: 0px;
@@ -97,7 +86,7 @@ body {
 
 		margin-bottom: 6px;
 	}
-	.infolabel {
+	.section {
 		padding: 15px 10px ;
 		
 		border-left: 5px solid #666666;
@@ -108,7 +97,7 @@ body {
 
 		color: white;
 	}
-	.infolabel .subtitle {
+	.section .subtitle {
 		font-family: 'Noto Sans';
 		color: white;
 		font-size: 20px;
@@ -134,12 +123,12 @@ body {
 		font-family: 'Noto Sans';
 		font-size: 40px;
 	}
-	#roster .infolabel {
+	#roster .section {
 		color: #CCCCCC;
 		font-family: 'Noto Sans';
 		font-weight: 600;
 		padding: 20px;
-		height: 378px;
+		height: 254px;
 	}
 	#roster-table {
 		text-align: left;
@@ -171,8 +160,8 @@ body {
 	.right-heading {
 		text-align: right;
 	}
-	#stats .infolabel {
-		height: 295px;
+	#stats .section {
+		height: 400px;
 		padding: 20px 50px;
 	}
 
@@ -187,7 +176,7 @@ body {
 		border-radius: 15px;
 		width: 100%;
 		color: white;
-		text-align: right;
+		text-align: left;
 		font-size: 20px;
 
 
@@ -243,8 +232,15 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 	text-transform: uppercase;
 	color: #666666;
 }
+.trackLabel {
+	padding-left: 15px;
+	padding-top: 5px;
+	position: relative;
+	z-index: 1000;
+}
 .dataDivider {
 	clear: both;
+	height:10px;
 
 }
 #lap .meter {
@@ -259,14 +255,6 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 	border-radius: 15px;
 }
 
-#power-stats {
-	width: 400px;
+powerChart {
 	height: 100px;
-}
-#power-stats .graphbar {
-	width: 55px;
-	height: 50%;
-	background-color: cyan;
-	border: 1px solid black;
-	float: left;
 }
