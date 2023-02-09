@@ -3,8 +3,26 @@ import * as common from '/pages/src/common.mjs';
 
 
 const doc = document.documentElement;
+const L = sauce.locale;
+const H = L.human;
+
+let imperial = common.storage.get('/imperialUnits');
+L.setImperial(imperial);
 
 let gameConnection;
+
+common.settingsStore.setDefault({
+    autoscroll: true,
+    refreshInterval: 2,
+    overlayMode: false,
+    fontScale: 1,
+    solidBackground: false,
+    backgroundColor: '#222222',
+    showSuperHint: false,
+    debugOn: false,
+    tttMode: false,
+    smoothCount: 3,
+});
 
 
 let ostrich = [
@@ -44,10 +62,10 @@ let knownCourses = {
 
 let currentRoute;
 let nearbyData;
-let lastRefresh;
+let debugOn;
 let tbody;
 let lastUpdated = 0;
-let ttt_mode = false;
+let ttt_mode;
 let leader_distance; //used in TTT mode
 let activeRider;
 
@@ -108,7 +126,7 @@ const config = {
            display: false,
             realtime: {
             delay: 2000,
-            
+            refresh: 3000,
             duration: 1000 * 60 * 5,
             onRefresh: chart => {
               chart.data.datasets.forEach(dataset => {
@@ -190,7 +208,7 @@ function toHoursAndMinutes(totalSeconds) {
 }
   
 function renderStats(watching){
-    console.log(watching);
+    if (debugOn) console.log(watching);
     const hrvalue = watching.state.heartrate;
     const ftp = watching.athlete.ftp;
     const power = watching.state.power;
@@ -209,7 +227,7 @@ function renderStats(watching){
     myChart.options.scales.y.suggestedMax = watching.athlete.ftp * 1.2;
 
     //refresh these things less often
-    let refreshInterval = 9900;
+    let refreshInterval = common.settingsStore.get('refreshInterval');
     if (Date.now() - lastUpdated > refreshInterval){
         lastUpdated = Date.now();
         let worldDesc; 
@@ -236,7 +254,7 @@ function renderStats(watching){
                     }
                 });
                 sprints.sort((a,b) => a.start - b.start);
-                console.log(sprints);
+                if (debugOn) console.log(sprints);
 
                 if (leadInPCT > 0) {
                     let segment = leadInPCT;
@@ -307,15 +325,30 @@ function renderStats(watching){
     doc.querySelector('#speed-a').innerHTML = watching.stats.speed.avg.toFixed(1);
 
 
-    //onsole.log(watching);
+    if(debugOn) console.log(watching);
 }
 
-async function main() {
+export async function main() {
+    
+    common.initInteractionListeners();
+    let settings = common.settingsStore.get();
+
+    debugOn = common.settingsStore.get('debugOn');
+
     let refresh;
     const setRefresh = () => {
         refresh = (1) * 1000 - 100; // within 100ms is fine.
     };
     
+
+    common.settingsStore.addEventListener('changed', ev => {
+        const changed = ev.data.changed;
+        if (changed.has('/imperialUnits')) {
+            L.setImperial(imperial = changed.get('/imperialUnits'));
+        }
+        //render();
+    });
+
     console.log("Sauce Version:", await common.rpc.getVersion());
     
     const gcs = await common.rpc.getGameConnectionStatus();
@@ -332,12 +365,15 @@ async function main() {
 
     });
 
+    ttt_mode = common.settingsStore.get('tttMode');
     //Mark the team
-    for(const i in team ){
-        let teammateId = team[i].athleteId;
-        const teammate = await common.rpc.getAthlete(teammateId, {refresh: true});
-        console.log(teammate);
-        if (teammate) await common.rpc.updateAthlete(teammateId, {marked: true});
+    if(ttt_mode){
+        for(const i in team ){
+            let teammateId = team[i].athleteId;
+            const teammate = await common.rpc.getAthlete(teammateId, {refresh: true});
+            if (debugOn) console.log(teammate);
+            if (teammate) await common.rpc.updateAthlete(teammateId, {marked: true});
+        }
     }
 
     setRefresh();
@@ -395,7 +431,10 @@ function renderRoster(data){
         if (ttt_mode) {
             riders = data;          
         } else {
-            riders = data.slice(centerIdx-3, centerIdx+3); //get two on either side of us 
+            let rosterCount = common.settingsStore.get('rosterCount');
+            let above = Math.ceil(rosterCount/2);
+            let below = rosterCount - above;
+            riders = data.slice(centerIdx-above, centerIdx+below); //get athletes on either side of us
         }
         
         if (riders.length > 1) leader_distance = riders[0].state.distance;
@@ -415,4 +454,9 @@ function renderRoster(data){
    
 }
 
-main();
+
+export async function settingsMain() {
+    common.initInteractionListeners();
+    await common.initSettingsForm('form')();
+    //await initWindowsPanel();
+}

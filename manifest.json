@@ -1,6 +1,6 @@
 {
     "manifest_version": 1,
-    "name": "OBS Mod",
+    "name": "OBS Overlay",
     "description": "Importable overlay for OBS",
     "author": "Kelly Maguire",
     "website_url": "https://kellbot.com",
@@ -9,8 +9,23 @@
     "windows": [{
         "file": "pages/overlay.html",
         "id": "obs-kellbot",
-        "name": "OBS Kellbot",
-        "description": "Kellbot's OBS Window",
+        "name": "OBS Overlay",
+        "description": "OBS Overlay to be imported as a Browser Source",
+        "always_visible": false,
+        "overlay": true,
+        "frame": true,
+        "default_bounds": {
+            "width": 0.5,
+            "height": 500,
+            "x": 100,
+            "y": -100
+        }
+    },
+    {
+        "file": "pages/overlay-settings.html",
+        "id": "obs-kellbot",
+        "name": "Settings",
+        "description": "OBS Overlay Settings",
         "always_visible": false,
         "overlay": true,
         "frame": true,

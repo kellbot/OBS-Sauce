@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-settings-key="kellbot-overlay-v1">
 <head>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:ital,wght@0,500;0,700;1,500;1,800&family=Noto+Sans+Mono:wght@200;600&family=Noto+Sans:wght@200;600&family=Tourney&display=swap" rel="stylesheet">
 
-<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 	<link href="./layout.css" rel="stylesheet" />
 
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2"></script>
@@ -15,7 +14,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0"></script>
 	
-	<script src="src/overlay.mjs" type="module"></script>
+	<script type="module">
+		import {main} from './src/overlay.mjs';
+		main();
+	</script>
 </head>
 <body>
 <div id="container">
