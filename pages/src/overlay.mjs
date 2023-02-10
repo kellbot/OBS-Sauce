@@ -73,9 +73,6 @@ let activeRider;
 let myChart;
 
 var GradientBgPlugin = {
-    onRefresh: function(chart) {
-        console.log('did the thign');
-    },
     beforeDraw: function(chart) { createGradient(chart); }
 };
 
@@ -89,20 +86,22 @@ function createGradient(chart) {
     const ftp = activeRider.athlete.ftp;
 
     const zones = [
-        {color: "#333333", max: 55},
-        {color: "#3783FF", max: 75},
-        {color: "#4DE94C", max: 90},
-        {color: "#FFEE00", max: 105},
-        {color: "#FF8C00", max: 120},
-        {color: "#FC0000", max: 150},
-        {color: "#4815AA", max: 155}
+        {color: "#666666", max: 55}, //gray
+        {color: "#3783FF", max: 75}, //blue
+        {color: "#4DE94C", max: 90}, //green
+        {color: "#FFEE00", max: 105}, //yellow
+        {color: "#FF8C00", max: 120}, //orange
+        {color: "#FC0000", max: 150}, //red
+        {color: "#4815AA", max: 300} //purple
     ]
 
     // Chart background
-    var gradientBack = canvas.getContext("2d").createLinearGradient(0, 0, 0, 255);
     
     let range = maxY - minY;
-    for (let i = zones.length -1; i >= 0 ; i--){
+    
+
+    var gradientBack = canvas.getContext("2d").createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+    for (let i = 0; i <  zones.length ; i++){
         let zone = zones[i];
         let maxWatts = zone.max / 100 * ftp; //the wattage at the top of this zone
         let minWatts = (i == 0) ? 0 : (zones[i-1].max)/100 * ftp;
@@ -116,11 +115,13 @@ function createGradient(chart) {
         let scaledMin = (minWatts -  minY) / range; //where this number falls in the box
         let scaledMax = (maxWatts -  minY) / range; //where this number falls in the box
         
-        let stopMin  = 1 - scaledMin; // we want to go from bottom to top
-        let stopMax  = 1 - scaledMax; 
-       // console.log(`Zone ${i+1} Min: ${minWatts} - ${scaledMin} Max:  ${maxWatts} ${scaledMax}`);
+        let stopMin  = scaledMin; // we want to go from bottom to top
+        let stopMax  = scaledMax; 
+        //console.log(`Zone ${i+1} Min: ${minWatts} - ${scaledMin} Max:  ${maxWatts} ${scaledMax}`);
         gradientBack.addColorStop(stopMin, zone.color);
         gradientBack.addColorStop(stopMax, zone.color);
+
+
 
         
     }
@@ -128,6 +129,7 @@ function createGradient(chart) {
     ctx.fillStyle = gradientBack;
     ctx.fillRect(chartArea.left, chartArea.bottom,
         chartArea.right - chartArea.left, chartArea.top - chartArea.bottom);
+
 }
 
 const config = {
@@ -136,18 +138,19 @@ const config = {
         datasets: [
             {
                 label: 'Power Output',
-                borderColor: 'rgb(165, 165, 165)',
+                borderColor: '#333333',
                 data: [],
 
                 pointRadius: 0,
+                cubicInterpolationMode: 'monotone',
             },
             {
                 label: 'FTP',
-                borderColor: '#000000',
+                borderColor: '#FFFFFF',
                 pointRadius: 0,
                 data: [],
-                borderDash: [2, 2],
-                borderWidth: 1
+                borderDash: [4, 4],
+                borderWidth: 2
             }
         ]
     },
@@ -166,25 +169,33 @@ const config = {
                 display: false,
                 realtime: {
                     delay: 2000,
-                    refresh: 3000,
-                    duration: 1000 * 60 * 5,
+                    refresh: 2000,
+                    duration: 1000 * 60 * 3,
                     onRefresh: chart => {
                         chart.data.datasets[0].data.push({
                                 x: Date.now(),
                                 y: activeRider.state.power,
                                 borderColor: 'rgb(54, 162, 235)',
                             });
-                        chart.data.datasets[1].data.push({
+                        chart.data.datasets[1].data = [
+                            {
+                                x: Date.now() - 1000 * 60 * 3,
+                                y: activeRider.athlete.ftp,
+                            },
+                            {
                             x: Date.now(),
                             y: activeRider.athlete.ftp,
-                        });
-                        //createGradient(chart);
+                        }];
+                        createGradient(chart);
                     }
                 }
             },
             y: {
                 suggestedMin: 160,
-                suggestedMax: 220
+                suggestedMax: 220,
+                grid: {
+                    display: false
+                }
             }
         },
 
@@ -280,6 +291,7 @@ function renderStats(watching) {
         let eventTitle = doc.querySelector('#event-name').innerHTML;
         if (watching.state.eventSubgroupId) {
             let event = getEvent(watching.state)
+            if (debugOn) console.log(event);
             currentRoute = event.route;
             eventTitle = event.name;
 
@@ -354,7 +366,7 @@ function renderStats(watching) {
         doc.querySelector('#course-name').innerHTML = worldDesc;// + ": " + route.name;
     }
 
-    let riderTime = toHoursAndMinutes(watching.stats.elapsedTime);
+    let riderTime = toHoursAndMinutes(watching.state.time);
     let courseProgress = watching.state.progress * 100;
 
     doc.querySelector('#timer .section').innerHTML =
@@ -367,7 +379,7 @@ function renderStats(watching) {
     doc.querySelector('#current-power').innerHTML = power;
     doc.querySelector('#current-draft').innerHTML = draft + "%";
     if (watching.stats.speed.smooth[60]) doc.querySelector('#speed-1m').innerHTML = watching.stats.speed.smooth[60].toFixed(1);
-    doc.querySelector('#speed-a').innerHTML = watching.stats.speed.avg.toFixed(1);
+    if (watching.stats.speed.avg) doc.querySelector('#speed-a').innerHTML = watching.stats.speed.avg.toFixed(1);
 
 
     if (debugOn) console.log(watching);
@@ -459,7 +471,8 @@ function updateRow(rider) {
 
 
 
-    let nameString = '<td class="name">' + rider.athlete.fullname.substring(0, 20) + "</td>";
+    let nameString;
+    if (rider.athlete) nameString = '<td class="name">' + rider.athlete.fullname.substring(0, 20) + "</td>";
     //let placeString = '<td></td>';
     // if (rider.state.eventSubgroupId) {
     //     placeString = '<td class="event-place">' + rider.eventPosition + '</td>';
