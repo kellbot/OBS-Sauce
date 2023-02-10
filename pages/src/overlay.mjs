@@ -99,21 +99,28 @@ function createGradient(chart) {
 
     // Chart background
     var gradientBack = canvas.getContext("2d").createLinearGradient(0, 0, 0, 255);
-    let lastStop = 1;
     
     let range = maxY - minY;
     for (let i = zones.length -1; i >= 0 ; i--){
         let zone = zones[i];
-        const maxWatts = zone.max / 100 * ftp; //the wattage at the top of this zone
-        if (maxWatts < minY || maxWatts > maxY) continue; //if this number isn't on the chart go to the next zone
+        let maxWatts = zone.max / 100 * ftp; //the wattage at the top of this zone
+        let minWatts = (i == 0) ? 0 : (zones[i-1].max)/100 * ftp;
+
+
+
+        if (maxWatts < minY || minWatts > maxY) continue; //if this number isn't on the chart go to the next zone
+        if (minWatts < minY) minWatts = minY;
+        if (maxWatts > maxY) maxWatts = maxY;
         
-        let scaled = (maxWatts -  minY) / range; //where this number falls in the box
+        let scaledMin = (minWatts -  minY) / range; //where this number falls in the box
+        let scaledMax = (maxWatts -  minY) / range; //where this number falls in the box
         
-        let stop = 1-scaled; // we want to go from bottom to top
-        gradientBack.addColorStop(lastStop, zone.color);
-        gradientBack.addColorStop(stop, zone.color);
-        //console.log(`Last stop: ${lastStop}, Current stop: ${stop}`);
-        lastStop = stop;
+        let stopMin  = 1 - scaledMin; // we want to go from bottom to top
+        let stopMax  = 1 - scaledMax; 
+       // console.log(`Zone ${i+1} Min: ${minWatts} - ${scaledMin} Max:  ${maxWatts} ${scaledMax}`);
+        gradientBack.addColorStop(stopMin, zone.color);
+        gradientBack.addColorStop(stopMax, zone.color);
+
         
     }
 
