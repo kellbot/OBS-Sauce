@@ -15,6 +15,7 @@ common.settingsStore.setDefault({
     autoscroll: true,
     refreshInterval: 2,
     overlayMode: false,
+    rosterCount: 6,
     fontScale: 1,
     solidBackground: false,
     backgroundColor: '#222222',
@@ -240,13 +241,15 @@ async function getRoute(id) {
 }
 
 function toHoursAndMinutes(totalSeconds) {
-    const totalMinutes = Math.floor(totalSeconds / 60);
+    const absSeconds = Math.abs(totalSeconds);
+    const totalMinutes = Math.floor(absSeconds / 60);
 
-    const seconds = Math.abs(Math.floor(totalSeconds % 60));
+    const seconds = Math.floor(absSeconds % 60);
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
+    const negative = (totalSeconds < 1) ? '-' : '';
 
-    return { h: hours, m: minutes, s: seconds };
+    return { h: hours, m: minutes, s: seconds, n: negative};
 }
 
 function renderStats(watching) {
@@ -372,7 +375,7 @@ function renderStats(watching) {
 
 export async function main() {
 
-    common.initInteractionListeners();
+    //common.initInteractionListeners();
     let settings = common.settingsStore.get();
 
     debugOn = common.settingsStore.get('debugOn');
@@ -445,12 +448,14 @@ function updateRow(rider) {
     gap_raw = rider.gap;
 
     let gap = toHoursAndMinutes(rider.gap);
-    if (Number.isInteger(leader_distance) && Number.isInteger(rider.state.distance)) {
+
+    //the idea here was to show rider spacing but it doesn't work very well
+    if (ttt_mode && Number.isInteger(leader_distance) && Number.isInteger(rider.state.distance)) {
         distance_string = `${Math.abs(leader_distance - rider.state.distance).toString().padStart(3, "\u00A0")}m`;
         leader_distance = rider.state.distance
     }
 
-    gap_string = `${gap.m}:${gap.s.toString().padStart(2, 0)}`;
+    gap_string = `${gap.n}${gap.m}:${gap.s.toString().padStart(2, 0)}`;
 
 
 
@@ -459,7 +464,7 @@ function updateRow(rider) {
     // if (rider.state.eventSubgroupId) {
     //     placeString = '<td class="event-place">' + rider.eventPosition + '</td>';
     // }
-    let html = `<tr>${nameString}<td class='monotime'>${gap_string} ${distance_string}</td><td class='draft monotime'>${rider.state.draft}%</td></tr>`;
+    let html = `<tr>${nameString}<td class='monotime'>${gap_string}</td><td class='draft monotime'>${rider.state.draft}%</td></tr>`;
     return html;
 }
 
