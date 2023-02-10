@@ -255,3 +255,9 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 	border-radius: 15px;
 }
 
+#powerchart {
+	height: 150px;
+	width: 520px;
+	margin-left: -35px;
+	margin-right: -35px;
+}

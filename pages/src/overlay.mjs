@@ -19,7 +19,7 @@ common.settingsStore.setDefault({
     fontScale: 1,
     solidBackground: false,
     backgroundColor: '#222222',
-    showSuperHint: false,
+    pzRangeDefinition: 'zwift',
     debugOn: false,
     tttMode: false,
     smoothCount: 3,
@@ -67,6 +67,7 @@ let debugOn;
 let tbody;
 let lastUpdated = 0;
 let ttt_mode;
+let pzMode;
 let leader_distance; //used in TTT mode
 let activeRider;
 
@@ -84,16 +85,31 @@ function createGradient(chart) {
     const minY = chart.scales.y.min;
     const maxY = chart.scales.y.max;
     const ftp = activeRider.athlete.ftp;
+    let zones;
 
-    const zones = [
-        {color: "#666666", max: 55}, //gray
-        {color: "#3783FF", max: 75}, //blue
-        {color: "#4DE94C", max: 90}, //green
-        {color: "#FFEE00", max: 105}, //yellow
-        {color: "#FF8C00", max: 120}, //orange
-        {color: "#FC0000", max: 150}, //red
-        {color: "#4815AA", max: 300} //purple
-    ]
+    if (pzMode == 'coggan'){
+
+        zones = [
+            {color: "#666666", max: 55}, //gray
+            {color: "#3783FF", max: 75}, //blue
+            {color: "#4DE94C", max: 90}, //green
+            {color: "#FFEE00", max: 105}, //yellow
+            {color: "#FF8C00", max: 120}, //orange
+            {color: "#FC0000", max: 150}, //red
+            {color: "#ffffff", max: 300} //purple
+        ]
+    } else {
+        
+        zones = [
+            {color: "#666666", max: 60}, //gray
+            {color: "#3783FF", max: 75}, //blue
+            {color: "#4DE94C", max: 89}, //green
+            {color: "#FFEE00", max: 104}, //yellow
+            {color: "#FF8C00", max: 118}, //orange
+            {color: "#FC0000", max: 300}, //red
+        ]
+    }
+
 
     // Chart background
     
@@ -195,6 +211,10 @@ const config = {
                 suggestedMax: 220,
                 grid: {
                     display: false
+                },
+                title: {
+                    text: 'watts',
+                    display: true
                 }
             }
         },
@@ -423,6 +443,7 @@ export async function main() {
     });
 
     ttt_mode = common.settingsStore.get('tttMode');
+    pzMode = common.settingsStore.get('pzRangeDefinition');
     //Mark the team
     if (ttt_mode) {
         for (const i in team) {
