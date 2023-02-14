@@ -51,12 +51,12 @@ function setNotes(watching, notes){
 }
 
 function displayNote(text){
-    doc.querySelector("#notes").innerHTML = text;
+    doc.querySelector("#content").innerHTML = text;
 }
 
 export async function main() {
     common.initInteractionListeners();
-    
+
     let athleteId;
 
     common.subscribe('athlete/watching', watching => {
