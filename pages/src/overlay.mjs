@@ -51,7 +51,7 @@ let team = hoss;
 
 let knownCourses = {
 
-    46799750:
+    46799750: //rolling highlands
         [{ 'start': 8200, 'end': 8800 }],
 
     1234567:

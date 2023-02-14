@@ -35,5 +35,20 @@
             "x": 100,
             "y": -100
         }
+    },
+    {
+        "file": "pages/course-notes.html",
+        "id": "obs-kellbot",
+        "name": "Course Notes",
+        "description": "Course Notes",
+        "always_visible": false,
+        "overlay": true,
+        "frame": true,
+        "default_bounds": {
+            "width": 500,
+            "height": 100,
+            "x": 100,
+            "y": -100
+        }
     }]
 }
