@@ -1,5 +1,6 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
+import{  renderNotes } from './course-notes.mjs';
 
 
 const doc = document.documentElement;
@@ -283,7 +284,7 @@ function toHoursAndMinutes(totalSeconds) {
     return { h: hours, m: minutes, s: seconds, n: negative};
 }
 
-function renderStats(watching) {
+async function renderStats(watching) {
     if (debugOn) console.log(watching);
     const hrvalue = watching.state.heartrate;
     const ftp = watching.athlete.ftp;
@@ -368,7 +369,7 @@ function renderStats(watching) {
             }
             let courseId = watching.state.courseId;
 
-            worldDesc = common.courseToNames[courseId] + ": " + event.route.name;
+            if(event.route) worldDesc = common.courseToNames[courseId] + ": " + event.route.name;
 
 
         } else {
@@ -376,7 +377,7 @@ function renderStats(watching) {
 
             worldDesc = common.courseToNames[courseId];
 
-            let route = getRoute(watching.state.eventSubgroupId);
+            let route = await getRoute(watching.state.eventSubgroupId);
             if (route.name) worldDesc += ": " + route.name;
         }
 
@@ -438,7 +439,10 @@ export async function main() {
             athleteId = watching.athleteId;
         }
         activeRider = watching;
-        if( watching.athlete ) renderStats(watching);
+        if( watching.athlete ) {
+            renderStats(watching);
+            renderNotes(watching);
+        }
 
     });
 

@@ -43,7 +43,7 @@
         "description": "Course Notes",
         "always_visible": false,
         "overlay": true,
-        "frame": true,
+        "frame": false,
         "default_bounds": {
             "width": 500,
             "height": 100,

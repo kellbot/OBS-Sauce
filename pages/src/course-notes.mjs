@@ -1,61 +1,135 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
-
+import { dsNotes } from '../ds-notes.mjs';
 
 const doc = document.documentElement;
-let lastNoteDistance;
+let gameConnection;
 
-const courseNotes = [
-        {'distance': 0, 'text': "Lead in - 5.1 km mostly downhill / undulating ending with KOM"},
-        {'distance': 2900, 'text': "100m @ 5%"},
-        {'distance': 4500, 'text': "FAL 1 - Breakwaway KOM - 600m @ 2.4 avg / 7% max"},
-        {'distance': 5800, 'text': "Flat / downhill 700m @ -2% max"},
-        {'distance': 6000, 'text': "Bridge @ 4%"},
-        {'distance': 6600, 'text': "200m @ 3%"},
-        {'distance': 7500, 'text': "Kicker @ 3% going under viaduct"},
-        {'distance': 8100, 'text': "200m @ 4%"},
-        {'distance': 9100, 'text': "Kicker @ 3% approaching left-hand corner"},
-        {'distance': 9700, 'text': "100m @ 3%"},
-        {'distance': 10000, 'text': "200m @ 4%"},
-        {'distance': 10600, 'text': "Sprint banner near pens, No FAL/FTS points on offer"},
-        {'distance': 12100, 'text': "Castle corkscrew climb - 300m @ 9%"},
-        {'distance': 13100, 'text': "Bridge % 4%"},
-        {'distance': 13500, 'text': "Breakwaway KOM - 600m @ 2.4 avg / 7% max"},
-        {'distance': 14100, 'text': "Flat / downhill 700m @ -2% max"},
-        {'distance': 14800, 'text': "Flat / downhill 700m @ -2% max"},
-        {'distance': 14900, 'text': "Bridge @ 4%"},
-        {'distance': 15500, 'text': "200m @ 3%"},
-        {'distance': 16400, 'text': "Kicker @ 3% going under viaduct"},
-        {'distance': 17000, 'text': "200m @ 4%"},
-        {'distance': 18000, 'text': "Kicker @ 3% approaching left-hand corner"},
-        {'distance': 18600, 'text': "100m @ 3%"},
-        {'distance': 18900, 'text': "200m @ 4%"},
-        {'distance': 19500, 'text': "Sprint banner near pens, No FAL/FTS points on offer"},
-        {'distance': 21000, 'text': "Castle corkscrew climb - 300m @ 9%"},
-        {'distance': 22000, 'text': "Bridge % 4%"},
-        {'distance': 22300, 'text': "Breakwaway KOM - 600m @ 2.4 avg / 7% max"},
-        {'distance': 22900, 'text': "Flat / downhill 700m @ -2% max"},
-];
+const content = document.querySelector('#course-notes');
+const meter = document.querySelector('#section-progress .meter');
+const labelText = document.querySelector('#section-progress label').innerHTML;
+
+const settings = common.settingsStore.get(null, {
+    cleanup: 120,
+    solidBackground: false,
+    backgroundColor: '#00ff00',
+    messageTransparency: 30,
+});
+
+
+function makeLazyGetter(cb) {
+    const getting = {};
+    const cache = new Map();
+
+    return function getter(key) {
+        if (!cache.has(key)) {
+            if (!getting[key]) {
+                getting[key] = cb(key).then(value => {
+                    cache.set(key, value || null);
+                    if (!value) {
+                        // Allow retry, especially for event data which is wonky
+                        setTimeout(() => cache.delete(key), 10000);
+                    }
+                    delete getting[key];
+                });
+            }
+            return;
+        } else {
+            return cache.get(key);
+        }
+    };
+}
+const lazyGetSubgroup = makeLazyGetter(id => common.rpc.getEventSubgroup(id));
+
+function getEvent(state) {
+    if (state.eventSubgroupId) {
+        const sg = lazyGetSubgroup(state.eventSubgroupId);
+
+        if (sg) return sg;
+
+    }
+
+    return false;
+}
+
+function getNotes(route){
+
+    let notes = dsNotes[route.id];
+
+    return notes;
+}
 
 function setNotes(watching, notes){
-    let distance = watching.state.eventDistance;
-    notes.sort((a,b) => b.distance - a.distance);
-    for(let i in notes){
-        if(notes[i].distance > distance) {
-            continue;
-        } else {
-            displayNote(notes[i].text);
-            return;
-        }
+    let distance = watching.state.eventDistance.toFixed(0);
+    let current = watching.state.distance; //what's the difference between these two?
+    if(notes) {
+        //if (current > distance) return; //if we've finished the course do nothing
+        notes.sort((a,b) => b.distance - a.distance); //reverse sort all notes
+        notes.every((note, i) => {
+            if(note.distance > current) {
+                return true;
+            } else {
+                let next;
+                if (i > 0) next = notes[i-1];
+                let nextNoteDistance = next ? next.distance : current;
+                console.log(`Rider distance: ${current} Event Distance: ${distance} Next note: ${next.distance}`);
+                console.log(watching);
+                let diff = nextNoteDistance - note.distance;
+                let pos = current - note.distance;
+                displayNote(note.text);
+                if (meter) updateMeter(diff, pos);
+                return false;
+            }
+        });
     }
 }
 
 function displayNote(text){
-    doc.querySelector("#content").innerHTML = text;
+    content.innerHTML = text;
 }
+
+function updateMeter(total, current) {
+    let pct = current / total * 100;
+    meter.querySelector('.track').style.width = pct + "%";
+    meter.querySelector('.trackLabel').innerHTML = (current) + " m";
+
+    document.querySelector('#section-progress label').innerHTML = `${labelText} - ${total}m`;
+}
+function setBackground() {
+    const {solidBackground, backgroundColor} = settings;
+    doc.classList.toggle('solid-background', solidBackground);
+    if (solidBackground) {
+        doc.style.setProperty('--background-color', backgroundColor);
+    } else {
+        doc.style.removeProperty('--background-color');
+    }
+}
+function setMsgOpacity() {
+    const {messageTransparency} = settings;
+    const opacity = messageTransparency == null ? 0.7 : 1 - (messageTransparency / 100);
+    doc.style.setProperty('--message-background-opacity', opacity);
+}
+export async function renderNotes(watching){
+    let event = getEvent(watching.state);
+    let route = event.route;
+    if(route) {
+        let courseNotes = getNotes(route);
+        if (courseNotes) setNotes(watching, courseNotes);
+    }
+   }
+
 
 export async function main() {
     common.initInteractionListeners();
+    setBackground();
+    setMsgOpacity();
+    common.settingsStore.addEventListener('changed', ev => {
+        setBackground();
+        setMsgOpacity();
+    });
+
+    const gcs = await common.rpc.getGameConnectionStatus();
+    gameConnection = !!(gcs && gcs.connected);
 
     let athleteId;
 
@@ -64,8 +138,7 @@ export async function main() {
             athleteId = watching.athleteId;
         }
         if( watching.athlete ) {
-            console.log(watching.state.eventDistance);
-            setNotes(watching, courseNotes);
+            renderNotes(watching);
         }
 
     });

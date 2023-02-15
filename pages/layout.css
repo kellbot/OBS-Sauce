@@ -1,25 +1,32 @@
 /* Layout */
 
 body {
-	font-family: 'Noto Sans';
+	
+	font-family: 'Exo 2', sans-serif;
 }
 
 #container {
 	width: 1920px;
 	height: 1080px;
-	background-color: #222222;
 	position: relative;
 }
 
 #zwift {
-	background-color: #666666;
+
 	width: 1280px;
 	height: 960px;
 	position: relative;
 	right: -20px;
 	top: 15px;
-	border: 5px solid #666666;
+	background: transparent;
 
+}
+#sidebar {
+	position: absolute;
+	top: 0px;
+	padding-left: 5px;
+	height: 1080px;
+	width: 550px;
 }
 
 #right-section{
@@ -27,8 +34,28 @@ body {
 	left: 590px;
 	top:0;
 	margin: 5px;
-	height: 1080px;
+	height: 1000px;
 	width: 1330px;
+}
+#bottom-bar {
+	height: 65px;
+	width: 1900px;
+	position: absolute;
+	bottom: 0px;
+	padding-left: 10px;
+	background: #111111;
+}
+.section {
+	padding: 15px 10px ;
+	
+	border: 3px solid #333333;
+	text-align: center;
+
+	color: white;
+}
+#bottom-bar .section {
+	padding-top:5px;
+	height: 45px;
 }
 #chat .section {
 	width: 1260px;
@@ -60,54 +87,36 @@ body {
 
 }
 
-
+#name {
+	display: inline-block;
+	width: 281px;
+	font-weight: 600;
+	font-size: 35px;
+}
 #timer {
 				
 	display: inline-block;
 	width: 225px;
-	font-family: 'Noto Sans Mono';
 	font-weight: 600;
 	font-size: 35px;
 }
-	#sidebar {
-		position: absolute;
-		top: 0px;
-		left: 35px;
-		height: 1080px;
-		width: 550px;
-	}
-	.raised-section {
-		padding: 5px;
-		border-right: 5px solid #111111;
-		border-left: 5px solid #111111;
-		border-top: 5px solid #111111;
-					border-bottom: 5px solid #111111;
-				background-color: #111111;
 
-		margin-bottom: 6px;
-	}
-	.section {
-		padding: 15px 10px ;
-		
-		border-left: 5px solid #666666;
-		border-top: 5px solid #666666;
-		border-right: 5px solid #666666;
-		border-bottom: 5px solid #666666;
-		text-align: center;
+.raised-section {
+	padding: 5px;
+	border-right: 5px solid #111111;
+	border-left: 5px solid #111111;
+	border-top: 5px solid #111111;
+				border-bottom: 5px solid #111111;
+			background-color: #111111;
 
-		color: white;
-	}
+}
+
 	.section .subtitle {
 		font-family: 'Noto Sans';
 		color: white;
 		font-size: 20px;
 	}
-	#roster {
-		position: absolute;
-		bottom: 0px;
-		width: 530px;
 
-	}
 	#roster .name {
 		width: 50%;
 	}
@@ -172,22 +181,7 @@ body {
 		float: left;
 		border-radius: 0;
 	}
-	.track{
-		border-radius: 15px;
-		width: 100%;
-		color: white;
-		text-align: left;
-		font-size: 20px;
 
-
-		background-image: 
-linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 10%, rgba(255,255,255,0) 10%, rgba(255,255,255,0) 90%, rgba(0, 0, 0, 0.3) 90%),
-linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px * 1/6 + 20px), #47C63A calc(400px * 2/6 - 20px), #FFD300 calc(400px * 2/6 + 20px), #FFD300 calc(400px * 3/6 - 20px), #FF9900 calc(400px * 3/6 + 20px),  #FF9900 calc(400px * 4/6 - 20px), #F44E5A calc(400px * 4/6 + 20px), #F44E5A calc(400px * 5/6 - 20px), #9C1AA3 calc(400px * 5/6), #9C1AA3 400px);
-		transition: 0.4s linear;  
-		transition-property: background-color;  
-			height: 40px;
-
-		}
 	#lap {
 		width: 400px;
 			font-size: 20px;
@@ -199,24 +193,7 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 		right: 13px;
 		top: 10px;
 	}
-	#lap .track {
-		background-image: 
-			linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 10%, rgba(255,255,255,0) 10%, rgba(255,255,255,0) 90%, rgba(0, 0, 0, 0.3) 90%);
-	background-color: #008DE3;
-	}
 
-	@keyframes slideup {
-		from {width: 30%;}
-		to {width: 67%;}
-	}
-	.meter {
-		margin-top: 5px;
-		padding: 1%;
-		height: 40px;
-			box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.4), 0 1px rgba(255, 255, 255, 0.08);
-		border-radius: 15px;
-
-	}
 
 .livestat {
 	color: #BBBBBB;
@@ -232,20 +209,13 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 	text-transform: uppercase;
 	color: #666666;
 }
-.trackLabel {
-	padding-left: 15px;
-	padding-top: 5px;
-	position: relative;
-	z-index: 1000;
-}
+
 .dataDivider {
 	clear: both;
 	height:10px;
 
 }
-#lap .meter {
-	position: relative;
-}
+
 .segments {
 	width: 400px;
 	height: 40px;
@@ -260,4 +230,24 @@ linear-gradient(to right, #008DE3 calc(400px * 1/6 - 20px), #47C63A calc(400px *
 	width: 520px;
 	margin-left: -35px;
 	margin-right: -35px;
+}
+
+#course-notes {
+	font-size: 25px;
+	text-align: left;
+	padding: 0px 15px;
+	height: 55px;
+	float: left;
+}
+#section-progress {
+	float: left;
+	margin-top: 0px;
+	width: 300px;
+}
+#section-progress .meter {
+	margin-top: 0;
+	height: 30px;
+}
+#section-progress .track  {
+	height: 30px;
 }
