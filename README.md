@@ -1,3 +1,4 @@
+![Sauce OBS Overlay](https://i.imgur.com/RUB6iOZ.png)
 # Sauce for Zwift OBS Overlay
 This is a mod which provides a data overlay for Zwift streaming. It is designed to work with OBS but may work with other software as well. It requires a paid subscription to [Sauce for Zwift](https://www.patreon.com/bePatron?u=32064618 ) in order to work.
 It is set up to work at a resolution of 1920 x 1080.
