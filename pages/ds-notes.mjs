@@ -1,7 +1,7 @@
 import * as routes from '/shared/deps/routes.mjs';
 
 export const dsNotes = {
-    '46799750': [
+    '46799750': [ //scotland - rolling highlands
         {'distance': 0, 'text': "Lead in - 5.1 km mostly downhill / undulating ending with KOM"},
         {'distance': 2900, 'text': "100m @ 5%"},
         {'distance': 4500, 'text': "FAL 1 - Breakwaway KOM - 600m @ 2.4 avg / 7% max"},
@@ -34,7 +34,7 @@ export const dsNotes = {
         {'distance': 22300, 'text': "Breakwaway KOM - 600m @ 2.4 avg / 7% max"},
         {'distance': 22900, 'text': "Flat / downhill 700m @ -2% max"}
     ],
-    '2207442179' : [
+    '2207442179' : [ //watopic - magnificent 8
         {'distance':  0, 'text':  "500m start. Get in formation."},
         {'distance': 500, 'text': "500m incline at 2%. Ride in formation."},
         {'distance': 1000, 'text':  "3.8km mostly flat. Ride in formation."},

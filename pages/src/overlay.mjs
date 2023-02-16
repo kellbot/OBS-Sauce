@@ -50,7 +50,17 @@ let hoss = [
 ]
     ;
 
-let team = hoss;
+let toads = [
+    { 'athleteId': 3295364, 'displayName': "Ingo", 'data': {} },
+    { 'athleteId': 3935431, 'displayName': "Kevin", 'data': {} },
+    { 'athleteId': 1146128, 'displayName': "Donal", 'data': {} },
+    { 'athleteId': 826453, 'displayName': "Brian", 'data': {} },
+    { 'athleteId': 2672785, 'displayName': "Ro", 'data': {} },
+    { 'athleteId': 4403382, 'displayName': "Jason", 'data': {} },
+]
+    ;
+
+let team = toads;
 
 let knownCourses = {
 
