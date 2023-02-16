@@ -6,6 +6,7 @@ const doc = document.documentElement;
 let gameConnection;
 
 const content = document.querySelector('#course-notes');
+const progress = document.querySelector('#section-progress');
 const meter = document.querySelector('#section-progress .meter');
 const labelText = document.querySelector('#section-progress label').innerHTML;
 
@@ -113,8 +114,11 @@ export async function renderNotes(watching){
     let event = getEvent(watching.state);
     let route = event.route;
     if(route) {
+
         let courseNotes = getNotes(route);
         if (courseNotes) setNotes(watching, courseNotes);
+    } else {
+        progress.style.display = 'none';
     }
    }
 

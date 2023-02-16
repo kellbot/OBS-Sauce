@@ -1,3 +1,5 @@
+import * as routes from '/shared/deps/routes.mjs';
+
 export const dsNotes = {
     '46799750': [
         {'distance': 0, 'text': "Lead in - 5.1 km mostly downhill / undulating ending with KOM"},
@@ -11,7 +13,7 @@ export const dsNotes = {
         {'distance': 9100, 'text': "Kicker @ 3% approaching left-hand corner"},
         {'distance': 9700, 'text': "100m @ 3%"},
         {'distance': 10000, 'text': "200m @ 4%"},
-        {'distance': 10600, 'text': "Sprint banner near pens, No FAL/FTS points on offer"},
+        {'distance': 10600, 'text': "Sprint banner near pens"},
         {'distance': 12100, 'text': "Castle corkscrew climb - 300m @ 9%"},
         {'distance': 12400, 'text': ""},
         {'distance': 13100, 'text': "Bridge @ 4%"},
@@ -25,7 +27,7 @@ export const dsNotes = {
         {'distance': 18000, 'text': "Kicker @ 3% approaching left-hand corner"},
         {'distance': 18600, 'text': "100m @ 3%"},
         {'distance': 18900, 'text': "200m @ 4%"},
-        {'distance': 19500, 'text': "Sprint banner near pens, No FAL/FTS points on offer"},
+        {'distance': 19500, 'text': "Sprint banner near pens"},
         {'distance': 21000, 'text': "Castle corkscrew climb - 300m @ 9%"},
         {'distance': 21300, 'text': ""},
         {'distance': 22000, 'text': "Bridge % 4%"},

@@ -24,10 +24,11 @@ body {
 #sidebar {
 	position: absolute;
 	top: 0px;
-	padding-left: 5px;
-	height: 1080px;
+	padding: 5px;
+	height: 1070px;
 	width: 550px;
-}
+	background-color: #111111;
+} 
 
 #right-section{
 	position: absolute;
@@ -38,16 +39,19 @@ body {
 	width: 1330px;
 }
 #bottom-bar {
-	height: 65px;
-	width: 1900px;
+	height: 80px;
+	width: 1920px;
 	position: absolute;
 	bottom: 0px;
-	padding-left: 10px;
 	background: #111111;
+	padding: 5px;
 }
 .section {
 	padding: 15px 10px ;
-	
+	margin: 5px;
+
+	background-color: #111111;
+
 	border: 3px solid #333333;
 	text-align: center;
 
@@ -77,6 +81,7 @@ body {
 	padding: 5px;
 	padding-top: 10px;
 	font-weight: 600;
+
 	
 }
 #course-name { 
@@ -88,34 +93,26 @@ body {
 }
 
 #name {
-	display: inline-block;
-	width: 281px;
+	float: left;
+	width: 253px;
 	font-weight: 600;
-	font-size: 35px;
+	font-size: 25px;
 }
 #timer {
 				
-	display: inline-block;
+	float: left;
 	width: 225px;
 	font-weight: 600;
-	font-size: 35px;
+	font-size: 25px;
 }
 
-.raised-section {
-	padding: 5px;
-	border-right: 5px solid #111111;
-	border-left: 5px solid #111111;
-	border-top: 5px solid #111111;
-				border-bottom: 5px solid #111111;
-			background-color: #111111;
-
-}
 
 	.section .subtitle {
 		font-family: 'Noto Sans';
 		color: white;
 		font-size: 20px;
 	}
+
 
 	#roster .name {
 		width: 50%;
@@ -132,12 +129,12 @@ body {
 		font-family: 'Noto Sans';
 		font-size: 40px;
 	}
-	#roster .section {
+	#roster.section {
 		color: #CCCCCC;
 		font-family: 'Noto Sans';
 		font-weight: 600;
 		padding: 20px;
-		height: 254px;
+		height: 260px;
 	}
 	#roster-table {
 		text-align: left;
@@ -169,9 +166,8 @@ body {
 	.right-heading {
 		text-align: right;
 	}
-	#stats .section {
-		height: 400px;
-		padding: 20px 50px;
+	#stats.section {
+		height: 440px;
 	}
 
 			.zone {
@@ -228,8 +224,6 @@ body {
 #powerchart {
 	height: 150px;
 	width: 520px;
-	margin-left: -35px;
-	margin-right: -35px;
 }
 
 #course-notes {

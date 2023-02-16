@@ -4,6 +4,8 @@ import{  renderNotes } from './course-notes.mjs';
 
 
 const doc = document.documentElement;
+const trackOverlay = doc.querySelector('#lap .meter .segments');
+const timer = doc.querySelector('#timer');
 const L = sauce.locale;
 const H = L.human;
 
@@ -310,6 +312,8 @@ async function renderStats(watching) {
         let worldDesc;
         //event info
         let eventTitle = doc.querySelector('#event-name').innerHTML;
+        
+        doc.querySelector('#name').innerHTML = watching.athlete.fullname.substring(0,20);
         if (watching.state.eventSubgroupId) {
             let event = getEvent(watching.state)
             if (debugOn) console.log(event);
@@ -342,7 +346,7 @@ async function renderStats(watching) {
                     let segment = lapPCT;
                     segments.push(segment);
                 }
-                const trackOverlay = doc.querySelector('#lap .meter .segments');
+
                 //Create the gradient
                 let barColor = '#008DE300';
 
@@ -378,7 +382,7 @@ async function renderStats(watching) {
             worldDesc = common.courseToNames[courseId];
 
             let route = await getRoute(watching.state.eventSubgroupId);
-            if (route.name) worldDesc += ": " + route.name;
+            if (route) worldDesc += ": " + route.name;
         }
 
 
@@ -390,9 +394,8 @@ async function renderStats(watching) {
     let riderTime = toHoursAndMinutes(watching.state.time);
     let courseProgress = watching.state.progress * 100;
 
-    doc.querySelector('#timer .section').innerHTML =
+    timer.innerHTML =
         riderTime.h + ":" + riderTime.m.toString().padStart(2, 0) + ":" + riderTime.s.toString().padStart(2, 0);
-
 
     doc.querySelector('#lap .track').style.width = courseProgress + "%";
     doc.querySelector('#lap .trackLabel').innerHTML = (watching.state.distance / 1000).toFixed(2) + " km";

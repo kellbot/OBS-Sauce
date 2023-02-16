@@ -13,3 +13,10 @@ It is set up to work at a resolution of 1920 x 1080.
 * Create a new [Browser source](https://obsproject.com/kb/browser-source) in OBS. In the URL field enter your Web Server URL from before, followed by `mods/obs/pages/overlay.html`
 * Set the width and height to 1920 and 1080, respectively
 * Once you start Zwift your data should show up on screen.
+
+## Windows
+### Overlay
+This is the browser source for OBS. It is designed to be used at 1920 x 1080.
+
+### Course Notes
+This is a sauce widget you can use to display course notes along the route during events. You can set these up by editing `pages/ds-notes.mjs`. Each course is its own entry in the `dsNotes` constant. Use the route ID as the object key for the course notes.
