@@ -8,7 +8,8 @@ let gameConnection;
 const content = document.querySelector('#course-notes');
 const progress = document.querySelector('#section-progress');
 const meter = document.querySelector('#section-progress .meter');
-const labelText = document.querySelector('#section-progress label').innerHTML;
+let labelText;
+if(document.querySelector('#section-progress') )  labelText = document.querySelector('#section-progress label').innerHTML;
 
 const settings = common.settingsStore.get(null, {
     cleanup: 120,
