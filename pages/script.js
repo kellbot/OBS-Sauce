@@ -1,40 +1,5 @@
 let sandbox = true;
 
-let teamData = {
-	"event" : "WTRL TTT 197",
-	"course" : "Richmond UCI Worlds",
-	"team": [
-		{
-			"name" : "Kevin R",
-			"zid" : 4548230
-		},
-		{
-			"name" : "Kevin B",
-			"zid" : 3935431
-		},
-		{
-			"name" : "Ro",
-			"zid" : 2672785
-		},
-		{
-			"name" : "Maik",
-			"zid" : 2840298
-		},
-		{
-			"name" : "Dom",
-			"zid" : 717384
-		},
-		{
-			"name" : "Mathew",
-			"zid" : 3658694
-		},
-		{
-			"name" : "Carl",
-			"zid" : 3109268
-		}
-
-	]
-}
 
 function toHoursAndMinutes(totalSeconds) {
   const totalMinutes = Math.floor(totalSeconds / 60);

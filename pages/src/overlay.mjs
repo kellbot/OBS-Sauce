@@ -29,38 +29,7 @@ common.settingsStore.setDefault({
 });
 
 
-let ostrich = [
-    { 'athleteId': 1354412, 'displayName': "J. Blackbourn", 'data': {} },
-    { 'athleteId': 3478319, 'displayName': "Badger", 'data': {} },
-    { 'athleteId': 3658694, 'displayName': "M. Brown", 'data': {} },
-    //   {'athleteId': 408281, 'displayName' : "G.Jones" , 'data' : {}},
-    { 'athleteId': 1331113, 'displayName': "J. Grant", 'data': {} },
-    { 'athleteId': 1150050, 'displayName': "K. Orange", 'data': {} },
-    { 'athleteId': 2570152, 'displayName': "S. Knowles", 'data': {} },
-
-];
-
-let hoss = [
-    { 'athleteId': 508078, 'displayName': "", 'data': {} },
-    { 'athleteId': 3429938, 'displayName': "", 'data': {} },
-    { 'athleteId': 3109924, 'displayName': "", 'data': {} },
-    { 'athleteId': 5507994, 'displayName': "", 'data': {} },
-    { 'athleteId': 3478319, 'displayName': "", 'data': {} },
-    { 'athleteId': 52227, 'displayName': "", 'data': {} },
-]
-    ;
-
-let toads = [
-    { 'athleteId': 3295364, 'displayName': "Ingo", 'data': {} },
-    { 'athleteId': 3935431, 'displayName': "Kevin", 'data': {} },
-    { 'athleteId': 1146128, 'displayName': "Donal", 'data': {} },
-    { 'athleteId': 826453, 'displayName': "Brian", 'data': {} },
-    { 'athleteId': 2672785, 'displayName': "Ro", 'data': {} },
-    { 'athleteId': 4403382, 'displayName': "Jason", 'data': {} },
-]
-    ;
-
-let team = toads;
+let team;
 
 let knownCourses = {
 
@@ -461,15 +430,15 @@ export async function main() {
 
     ttt_mode = common.settingsStore.get('tttMode');
     pzMode = common.settingsStore.get('pzRangeDefinition');
-    //Mark the team
-    if (ttt_mode) {
-        for (const i in team) {
-            let teammateId = team[i].athleteId;
-            const teammate = await common.rpc.getAthlete(teammateId, { refresh: true });
-            if (debugOn) console.log(teammate);
-            if (teammate) await common.rpc.updateAthlete(teammateId, { marked: true });
-        }
-    }
+    // //Mark the team
+    // if (ttt_mode) {
+    //     for (const i in team) {
+    //         let teammateId = team[i].athleteId;
+    //         const teammate = await common.rpc.getAthlete(teammateId, { refresh: true });
+    //         if (debugOn) console.log(teammate);
+    //         if (teammate) await common.rpc.updateAthlete(teammateId, { marked: true });
+    //     }
+    // }
 
     setRefresh();
     let lastRefresh = 0;
