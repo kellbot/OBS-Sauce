@@ -10,6 +10,8 @@
 
         <link id="favicon" rel="shortcut icon" href="/pages/images/favicon.png"/>
         <link rel="stylesheet" href="/pages/css/common.css"/>
+        <link href="./settings.css" rel="stylesheet" />
+
 
         <script type="module">
             import {settingsMain} from './src/overlay.mjs';
@@ -37,6 +39,8 @@
                     <key>TTT Mode:</key>
                     <input type="checkbox" name="tttMode"/>
                 </label>
+
+
                 <label title="Zwift uses six zones for power, Coggan uses seven">
                     <key>Power zone range:</key>
                     <select name="pzRangeDefinition">
@@ -62,7 +66,26 @@
                     <key data-added="1675908707849">Max athletes:</key>
                     <input type="number" min="1" step="1" name="tttDistance"/>
                 </label>
-
+                <table id="teams">
+                    <thead><tr><th>Team</th><th>Members</th><th></th><th></th><th></th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+                <div id="new-team">
+                    <label>
+                        <key>Team name:</key>
+                        <input type="text" name="teamName"/>
+                    </label>
+                    <label>
+                     <key>Teammate IDs:</key>
+                     <input type="text"  name="teamIds"/>
+                
+                    </label>
+                    <div class="std small button" data-action="team-save">Save team</div>
+                    <div class="std small button" data-action="team-cancel">Cancel</div>
+                </div>
+                <div class="action-buttons">
+                    <div class="std small button" data-action="team-create">Create new team</div>
+                </div>
 
                 <hr/>
 

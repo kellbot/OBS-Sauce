@@ -6,6 +6,8 @@ import{  renderNotes } from './course-notes.mjs';
 const doc = document.documentElement;
 const trackOverlay = doc.querySelector('#lap .meter .segments');
 const timer = doc.querySelector('#timer');
+const nameDiv = doc.querySelector('#name');
+const newTeamDiv = doc.querySelector('#new-team');
 const L = sauce.locale;
 const H = L.human;
 
@@ -26,6 +28,7 @@ common.settingsStore.setDefault({
     debugOn: false,
     tttMode: false,
     smoothCount: 3,
+    teams: {}
 });
 
 
@@ -54,6 +57,43 @@ let leader_distance; //used in TTT mode
 let activeRider;
 
 let myChart;
+
+function parseDelimitedString(str) {
+    // check if the string is comma delimited
+    if (str.includes(',')) {
+      // remove any spaces from the string
+      str = str.replace(/\s/g, '');
+  
+      // split the string into an array using the comma as a delimiter
+      const strArray = str.split(',');
+  
+      // use the Array.map() method to convert each string element to an integer
+      const intArray = strArray.map(str => parseInt(str));
+  
+      return intArray;
+    }
+    // check if the string is space delimited
+    else if (str.includes(' ')) {
+      // split the string into an array using the space as a delimiter
+      const strArray = str.split(' ');
+  
+      // use the Array.map() method to convert each string element to an integer
+      const intArray = strArray.map(str => parseInt(str));
+  
+      return intArray;
+    }
+    // if the string is not delimited, assume it is a single integer value
+    else {
+      return [parseInt(str)];
+    }
+}
+
+function removeNonLetters(str) {
+    // remove any non-letter characters with a hyphen
+    const newStr = str.replace(/[^a-zA-Z]/g, '-');
+  
+    return newStr;
+  }
 
 var GradientBgPlugin = {
     beforeDraw: function(chart) { createGradient(chart); }
@@ -286,13 +326,14 @@ async function renderStats(watching) {
 
     //refresh these things less often
     let refreshInterval = common.settingsStore.get('refreshInterval');
+    if (!refreshInterval) refreshInterval = 2;
+
     if (Date.now() - lastUpdated > refreshInterval) {
         lastUpdated = Date.now();
         let worldDesc;
         //event info
         let eventTitle = doc.querySelector('#event-name').innerHTML;
         
-        doc.querySelector('#name').innerHTML = watching.athlete.fullname.substring(0,20);
         if (watching.state.eventSubgroupId) {
             let event = getEvent(watching.state)
             if (debugOn) console.log(event);
@@ -390,6 +431,8 @@ async function renderStats(watching) {
 
 export async function main() {
 
+    console.log("Sauce Version:", await common.rpc.getVersion());
+
     //common.initInteractionListeners();
     let settings = common.settingsStore.get();
 
@@ -409,7 +452,6 @@ export async function main() {
         //render();
     });
 
-    console.log("Sauce Version:", await common.rpc.getVersion());
 
     const gcs = await common.rpc.getGameConnectionStatus();
     gameConnection = !!(gcs && gcs.connected);
@@ -419,6 +461,8 @@ export async function main() {
     common.subscribe('athlete/watching', watching => {
         if (watching.athleteId !== athleteId) {
             athleteId = watching.athleteId;
+            
+            nameDiv.innerHTML = watching.athlete.fullname.substring(0,20);
         }
         activeRider = watching;
         if( watching.athlete ) {
@@ -457,7 +501,120 @@ export async function main() {
 
 
 }
+function getTeam(teamSlug) {
+    let teams = common.settingsStore.get('teams');
+    return teams[teamSlug];
+}
+function saveTeam(teamName, rosterArr) {
+    let teams = common.settingsStore.get('teams');
+    if(!teams) teams = {};
+    let team_slug = removeNonLetters(teamName);
+    let newTeam = {name: teamName, roster: rosterArr};
+    teams[team_slug] = newTeam;
+    common.settingsStore.set('teams', teams);
+    console.log(common.settingsStore.get('teams'));
+}
 
+async function renderTeamsList(){
+    
+    const teamTable = document.getElementById('teams');
+    let teams = common.settingsStore.get('teams');
+    console.log(teams);
+    
+    //remove all rows except header
+    for (let i = teamTable.rows.length - 1; i > 0; i--) {
+        teamTable.deleteRow(i);
+    }
+
+    for (team in teams){
+        let teamSlug = removeNonLetters(teams[team].name);
+        const teamRow = teamTable.insertRow();
+        const nameCell = teamRow.insertCell();
+        nameCell.innerHTML = teams[team].name;
+        nameCell.classList = 'team-name';
+        
+        const rosterCell = teamRow.insertCell();
+        rosterCell.innerHTML = 'fetching names...';
+
+        const trashCell = teamRow.insertCell();
+        trashCell.innerHTML = `<a class="link danger team-delete" data-team="${teamSlug}"><ms>delete_forever</ms></a>`;
+        trashCell.classList = 'btn';
+        const editCell = teamRow.insertCell();
+        editCell.innerHTML = `<a class="link team-edit title="Edit team" data-team="${teamSlug}"><ms>edit</ms></a>`;
+        let rosterNames = [];
+        let roster = teams[team].roster.filter((value) => value !== null);
+
+        for(let i = 0; i < roster.length; i++){
+            let athlete;
+            try {
+                athlete = await common.rpc.getAthlete(roster[i], {refresh: true});
+                
+               rosterNames.push(athlete.fullname);
+            } catch {
+                console.log(`Error with athleteId ${roster[i]}`);
+            }
+        }
+        rosterCell.classList = 'team-roster';
+        rosterCell.innerHTML = rosterNames.join(', ');
+    }
+
+}
+
+async function initTeamsPanel() {
+    document.addEventListener('click', async ev => {
+        const btn = ev.target.closest('.button[data-action]');
+        if (!btn) {
+            return;
+        }
+        if (btn.dataset.action === 'team-create') { //show the team form
+           newTeamDiv.style.display = 'block';
+           
+           document.querySelector('.action-buttons').style.display = 'none';
+        } 
+        if (btn.dataset.action === 'team-cancel' ) { //hide the team form
+            newTeamDiv.style.display = 'none';
+            document.querySelector('.action-buttons').style.display = 'block';
+        }
+        if (btn.dataset.action === 'team-save' ) {
+            let teamName = document.querySelector("input[name='teamName']").value;
+            let rosterString = document.querySelector("input[name='teamIds']").value;
+            let roster = parseDelimitedString(rosterString);
+            saveTeam(teamName, roster);
+            newTeamDiv.style.display = 'none';
+            document.querySelector('.action-buttons').style.display = 'block';
+     
+            await renderTeamsList();
+    
+        }
+    });
+    document.addEventListener('click', async ev => {
+        const link = ev.target.closest('table a.link');
+        if (!link) {
+            return;
+        }
+        if (link.classList.contains('team-delete')) {
+            let teamSlug = link.getAttribute('data-team');
+            let teams = common.settingsStore.get('teams');
+            delete teams[teamSlug];
+            common.settingsStore.set('teams', teams);
+        } else if (link.classList.contains('team-edit')) {
+            const teamRow = ev.target.closest('tr');
+            let teamSlug = link.getAttribute('data-team');
+            let team = getTeam(teamSlug);
+            document.querySelector("input[name='teamName']").value = team.name;
+            let teamIdDiv = document.querySelector("input[name='teamIds']");
+            teamIdDiv.value = team.roster.join(', ');
+            teamIdDiv.style.width = (team.roster.length * 75) + 'px';
+            newTeamDiv.style.display = 'block';
+            document.querySelector('.action-buttons').style.display = 'none';
+
+        }
+
+        await renderTeamsList();
+        
+    });
+    await renderTeamsList();
+}
 
 function updateRow(rider) {
     let gap_raw;
@@ -525,5 +682,5 @@ function renderRoster(data) {
 export async function settingsMain() {
     common.initInteractionListeners();
     await common.initSettingsForm('form')();
-    //await initWindowsPanel();
+    await initTeamsPanel();
 }
