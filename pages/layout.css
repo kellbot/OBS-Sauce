@@ -40,7 +40,8 @@ body {
 }
 #bottom-bar {
 	height: 80px;
-	width: 1920px;
+	width: 1370px;
+	margin-left:550px;
 	position: absolute;
 	bottom: 0px;
 	background: #111111;
@@ -134,7 +135,7 @@ body {
 		font-family: 'Noto Sans';
 		font-weight: 600;
 		padding: 20px;
-		height: 260px;
+		height: 344px;
 	}
 	#roster-table {
 		text-align: left;

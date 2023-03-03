@@ -39,6 +39,23 @@
                     <key>TTT Mode:</key>
                     <input type="checkbox" name="tttMode"/>
                 </label>
+                
+                <label title="First column of roster data">
+                    <key>Roster Data 1:</key>
+                    <select name="rosterData1">
+                        <option value="draft">Draft</option>
+                        <option value="gap">Gap</option>
+                        <option value="speed">Speed</option>
+                    </select>
+                </label>
+                <label title="Second column of roster data">
+                    <key>Roster Data 2:</key>
+                    <select name="rosterData2">
+                        <option value="draft">Draft</option>
+                        <option value="gap">Gap</option>
+                        <option value="speed">Speed</option>
+                    </select>
+                </label>
 
 
                 <label title="Zwift uses six zones for power, Coggan uses seven">
@@ -92,18 +109,6 @@
                     <div class="std small button" data-action="team-create">Create new team</div>
                 </div>
 
-                <hr/>
-
-                <label>
-                    <key>Theme override:</key>
-                    <select is="sauce-theme" override></select>
-                </label>
-
-                <label>
-                    <key>Background color:</key>
-                    <input type="color" name="backgroundColor" />
-                    <input type="text" name="backgroundColor" size="7"/>
-                </label>
                 <hr />
                 <label title="Logs a bunch of stuff to the console">
                     <key>Debug Mode:</key>

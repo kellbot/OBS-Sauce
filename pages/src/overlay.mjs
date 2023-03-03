@@ -21,15 +21,13 @@ common.settingsStore.setDefault({
     refreshInterval: 2,
     overlayMode: false,
     rosterCount: 6,
-    fontScale: 1,
-    solidBackground: false,
-    backgroundColor: '#222222',
     pzRangeDefinition: 'zwift',
     debugOn: false,
     tttMode: false,
-    smoothCount: 3,
     teams: {},
-    teamSelect: null
+    teamSelect: null,
+    rosterData1: 'gap',
+    rosterData2: 'draft',
 });
 
 
@@ -450,7 +448,9 @@ export async function main() {
         if (changed.has('/imperialUnits')) {
             L.setImperial(imperial = changed.get('/imperialUnits'));
         }
-        //render();
+        if (changed.has('tttMode')) {
+            ttt_mode = changed.get('tttMode');
+        }
     });
 
 
@@ -489,7 +489,6 @@ export async function main() {
     setRefresh();
     let lastRefresh = 0;
     common.subscribe('nearby', data => {
-        if (debugOn) console.log(data);
         if (ttt_mode) {
             if (settings.teamSelect) {
                 let team = settings.teams[settings.teamSelect];
@@ -521,7 +520,6 @@ function saveTeam(teamName, rosterArr) {
     let newTeam = {name: teamName, roster: rosterArr};
     teams[team_slug] = newTeam;
     common.settingsStore.set('teams', teams);
-    console.log(common.settingsStore.get('teams'));
 }
 
 async function renderTeamsList(){
@@ -637,35 +635,36 @@ async function initTeamsPanel() {
 }
 
 function updateRow(rider) {
-    let gap_raw;
-    let gap_string;
-    let distance_string;
+    if (!rider.athlete) return;
 
-    gap_raw = rider.gap;
+    let row = document.createElement("tr");
 
-    let gap = toHoursAndMinutes(rider.gap);
+    let nameCell = row.insertCell();
+    nameCell.classList = 'name';
+    nameCell.innerHTML = rider.athlete.fLast.substring(0, 20);
+    
+    let columns = ['rosterData1', 'rosterData2'];
+    for (let i = 0; i < columns.length; i++){
+        let stat = common.settingsStore.get(columns[i]);
+        let heading = document.querySelector('#' + columns[i]);
 
-    //the idea here was to show rider spacing but it doesn't work very well
-    if (ttt_mode && Number.isInteger(leader_distance) && Number.isInteger(rider.state.distance)) {
-        distance_string = `${Math.abs(leader_distance - rider.state.distance).toString().padStart(3, "\u00A0")}m`;
-        leader_distance = rider.state.distance
+        let cell = row.insertCell();
+        cell.classList = `monotime ${stat}`;
+        heading.innerHTML = stat;
+        if (stat == 'gap') {       
+            let gap = toHoursAndMinutes(rider.gap);
+            cell.innerHTML = `${gap.n}${gap.m}:${gap.s.toString().padStart(2, 0)}`;
+        } else if (stat == 'draft') {
+            cell.innerHTML = rider.state.draft;
+        } else if (stat == 'speed') {
+            cell.innerHTML = rider.state.speed.toFixed(1);
+        }
+        
+
     }
-
-    gap_string = `${gap.n}${gap.m}:${gap.s.toString().padStart(2, 0)}`;
-
-
-
-    let nameString;
-    if (rider.athlete) nameString = '<td class="name">' + rider.athlete.fullname.substring(0, 20) + "</td>";
-    //let placeString = '<td></td>';
-    // if (rider.state.eventSubgroupId) {
-    //     placeString = '<td class="event-place">' + rider.eventPosition + '</td>';
-    // }
-    let html = `<tr>${nameString}<td class='monotime'>${gap_string}</td><td class='draft monotime'>${rider.state.draft}%</td></tr>`;
-    return html;
+    return row;
 }
 
-let frames = 0;
 function renderRoster(data) {
     tbody = doc.querySelector('#roster-table tbody');
     let riders;
@@ -689,8 +688,8 @@ function renderRoster(data) {
         for (let i = 0; i < riders.length; i++) {
             let rider = riders[i];
             const tr = document.createElement('tr');
-            tr.innerHTML = updateRow(rider);
-            tbody.appendChild(tr);
+            let row = updateRow(rider);
+            tbody.appendChild(row);
         }
     }
 
