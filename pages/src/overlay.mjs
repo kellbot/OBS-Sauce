@@ -28,7 +28,8 @@ common.settingsStore.setDefault({
     debugOn: false,
     tttMode: false,
     smoothCount: 3,
-    teams: {}
+    teams: {},
+    teamSelect: null
 });
 
 
@@ -306,7 +307,7 @@ function toHoursAndMinutes(totalSeconds) {
 }
 
 async function renderStats(watching) {
-    if (debugOn) console.log(watching);
+
     const hrvalue = watching.state.heartrate;
     const ftp = watching.athlete.ftp;
     const power = watching.state.power;
@@ -463,6 +464,7 @@ export async function main() {
             athleteId = watching.athleteId;
             
             nameDiv.innerHTML = watching.athlete.fullname.substring(0,20);
+            if (debugOn) console.log(watching);
         }
         activeRider = watching;
         if( watching.athlete ) {
@@ -487,8 +489,15 @@ export async function main() {
     setRefresh();
     let lastRefresh = 0;
     common.subscribe('nearby', data => {
+        if (debugOn) console.log(data);
         if (ttt_mode) {
-            data = data.filter(x => x.watching || (x.athlete && x.athlete.marked));
+            if (settings.teamSelect) {
+                let team = settings.teams[settings.teamSelect];
+                
+                data = data.filter(x => x.watching || (x.athlete && team.roster.includes(x.athlete.id) ));
+            } else {
+                data = data.filter(x => x.watching || (x.athlete && x.athlete.marked));
+            }
         }
         nearbyData = data;
         const elapsed = Date.now() - lastRefresh;
@@ -516,6 +525,8 @@ function saveTeam(teamName, rosterArr) {
 }
 
 async function renderTeamsList(){
+    const teamSelect = document.querySelector('select[name="teamSelect"]');
+    teamSelect.options.length = 0; //reset the selector
     
     const teamTable = document.getElementById('teams');
     let teams = common.settingsStore.get('teams');
@@ -532,30 +543,39 @@ async function renderTeamsList(){
         const nameCell = teamRow.insertCell();
         nameCell.innerHTML = teams[team].name;
         nameCell.classList = 'team-name';
+
+        //add it to the select as well
+        
+        const teamOption = document.createElement("option");
+        teamOption.text = teams[team].name;
+        teamOption.value = teamSlug;
+        if (teamSlug == common.settingsStore.get('teamSelect')) teamOption.selected = true;
+        
+        teamSelect.add(teamOption);
         
         const rosterCell = teamRow.insertCell();
-        rosterCell.innerHTML = 'fetching names...';
+        
 
         const trashCell = teamRow.insertCell();
         trashCell.innerHTML = `<a class="link danger team-delete" data-team="${teamSlug}"><ms>delete_forever</ms></a>`;
         trashCell.classList = 'btn';
         const editCell = teamRow.insertCell();
         editCell.innerHTML = `<a class="link team-edit title="Edit team" data-team="${teamSlug}"><ms>edit</ms></a>`;
-        let rosterNames = [];
-        let roster = teams[team].roster.filter((value) => value !== null);
-
-        for(let i = 0; i < roster.length; i++){
-            let athlete;
-            try {
-                athlete = await common.rpc.getAthlete(roster[i], {refresh: true});
+        // let rosterNames = [];
+        // let roster = teams[team].roster.filter((value) => value !== null);
+        //This is cool but ugly and slow
+        // for(let i = 0; i < roster.length; i++){
+        //     let athlete;
+        //     try {
+        //         athlete = await common.rpc.getAthlete(roster[i], {refresh: true});
                 
-               rosterNames.push(athlete.fullname);
-            } catch {
-                console.log(`Error with athleteId ${roster[i]}`);
-            }
-        }
+        //        rosterNames.push(athlete.fullname);
+        //     } catch {
+        //         console.log(`Error with athleteId ${roster[i]}`);
+        //     }
+        // }
         rosterCell.classList = 'team-roster';
-        rosterCell.innerHTML = rosterNames.join(', ');
+        rosterCell.innerHTML = `${teams[team].roster.length} members`;
     }
 
 }

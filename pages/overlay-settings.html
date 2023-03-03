@@ -66,6 +66,11 @@
                     <key data-added="1675908707849">Max athletes:</key>
                     <input type="number" min="1" step="1" name="tttDistance"/>
                 </label>
+                <label title="Select an existing team or create a new one">
+                    <key>Team:</key>
+                    <select name="teamSelect">
+                    </select>
+                </label>
                 <table id="teams">
                     <thead><tr><th>Team</th><th>Members</th><th></th><th></th><th></th><th></th></tr></thead>
                     <tbody></tbody>
@@ -75,7 +80,7 @@
                         <key>Team name:</key>
                         <input type="text" name="teamName"/>
                     </label>
-                    <label>
+                    <label title="comma delimited list of Zwift ID numbers">
                      <key>Teammate IDs:</key>
                      <input type="text"  name="teamIds"/>
                 

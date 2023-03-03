@@ -15,9 +15,13 @@ It is set up to work at a resolution of 1920 x 1080.
 * Set the width and height to 1920 and 1080, respectively
 * Once you start Zwift your data should show up on screen.
 
-## Windows
+## Tools
 ### Overlay
-This is the browser source for OBS. It is designed to be used at 1920 x 1080.
+This is the browser source for OBS, and cannot be added as a widget by itself. It is designed to be used at 1920 x 1080.
 
+### Team Rosters
+You can optionally filter the nearby riders list by a pre-configured list of riders. This is helpful if you race with multiple teams and don't want to mark / unmark everyone for each race. To set up a team open the server URL in a browser window, then click "Settings" under OBS. Click "Create team" and enter a team name followed by a list of comma delimited Zwift ID numbers (`123, 1235, 6543, 1235`); Then select that team from the dropdown menu. When `TTT mode` is selected in settings the roster will be filtered by this list.
+
+## Windows
 ### Course Notes
 This is a sauce widget you can use to display course notes along the route during events. You can set these up by editing `pages/ds-notes.mjs`. Each course is its own entry in the `dsNotes` constant. Use the route ID as the object key for the course notes.
