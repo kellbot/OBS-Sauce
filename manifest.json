@@ -6,9 +6,10 @@
     "website_url": "https://kellbot.com",
     "version": "0.0.2",
     "web_root": "pages",
-    "windows": [{
+    "windows": [
+        {
         "file": "pages/overlay.html",
-        "id": "obs-kellbot",
+        "id": "obs-overlay",
         "name": "OBS Overlay",
         "description": "OBS Overlay to be imported as a Browser Source",
         "always_visible": false,
@@ -22,23 +23,8 @@
         }
     },
     {
-        "file": "pages/overlay-settings.html",
-        "id": "obs-kellbot",
-        "name": "Settings",
-        "description": "OBS Overlay Settings",
-        "always_visible": false,
-        "overlay": true,
-        "frame": true,
-        "default_bounds": {
-            "width": 0.5,
-            "height": 500,
-            "x": 100,
-            "y": -100
-        }
-    },
-    {
         "file": "pages/course-notes.html",
-        "id": "obs-kellbot",
+        "id": "obs-course-notes",
         "name": "Course Notes",
         "description": "Course Notes",
         "always_visible": false,
