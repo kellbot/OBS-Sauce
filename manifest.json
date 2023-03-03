@@ -36,5 +36,21 @@
             "x": 100,
             "y": -100
         }
+    },
+    {        
+    "file": "pages/game.html",
+    "id": "desert-bus",
+    "name": "Desert Bus",
+    "description": "Desert Bus for Zwift",
+    "always_visible": false,
+    "overlay": true,
+    "frame": false,
+    "default_bounds": {
+        "width": 640,
+        "height": 480,
+        "x": 100,
+        "y": -100
+
+        }    
     }]
 }

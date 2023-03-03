@@ -25,3 +25,6 @@ You can optionally filter the nearby riders list by a pre-configured list of rid
 ## Windows
 ### Course Notes
 This is a sauce widget you can use to display course notes along the route during events. You can set these up by editing `pages/ds-notes.mjs`. Each course is its own entry in the `dsNotes` constant. Use the route ID as the object key for the course notes.
+
+### Desert Bus
+"Play" the world's worst game while you Zwift!
