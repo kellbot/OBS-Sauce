@@ -4,20 +4,24 @@ html:not(.electron-mode), html body {
 #bus {
     width: 640px;
     height: 480px;
-    background: url(./images/desertbus.png) 0 0;
-
+    background: url('./images/bus.png') 0 0;
+    background-size: auto 100%;
+    image-rendering: pixelated;
+    
 }
 
 #odometer {
     position: absolute;
     left: 363px;
-    top: 353px;
+    top: 383px;
 
 }
 
 .digit {
+    background-image: url(./images/desertbus.png);
+
     width: 10px;
-    height: 18px;
+    height: 16px;
     float: left;
 }
 
@@ -26,21 +30,22 @@ html:not(.electron-mode), html body {
 }
 
 .black {
-    background-image: url(./images/desertbus.png);
+
+    image-rendering: pixelated;
     background-position-x: 0;
     background-position-y: -460px;
 
 }
 .white {
-    background-image: url(./images/desertbus.png);
     background-position-x:  -12px;
     background-position-y: -460px;
 
+    image-rendering: pixelated;
 }
 
 #speedometer {
     position: absolute;
-    top: 352px;
+    top: 386px;
     left: 188px;
     width: 64px;
     height: 64px;
@@ -50,40 +55,25 @@ html:not(.electron-mode), html body {
     width: 64px; 
     background-position-y: -640px;
     background-image: url(./images/desertbus.png);
-}
-.spd-0 {    
-    background-position-x: 0px;
-}
-.spd-15 {
-    background-position-x: -64px;
-}
-.spd-30 {
-    background-position-x: -128px;
-}
-.spd-45 {
+
+    image-rendering: pixelated;
     background-position-x: -192px;
 }
-.spd-60 {
-    background-position-x: -254px;
-}
-.spd-75 {
-    background-position-x: -320px;
-}
-.spd-90 {
-    background-position-x: -384px;
-}
+
 #steering-wheel {
     background-image: url('./images/steering.png');
+
+    image-rendering: pixelated;
     background-position-x: 0;
     width: 192px;
     height: 130px;
     position: absolute;
-    top: 320px;
-    left: 38px;
+    top: 350px;
+    left: 42px;
     animation: steer 2.5s steps(4) infinite alternate;
 }
 @keyframes steer {
-    100% {background-position-x: -768px;}
+    100% {background-position-x: -400%;}
  
     
 }
@@ -93,29 +83,24 @@ html:not(.electron-mode), html body {
     position: absolute;
     top: 50px;
     left:79px;
-}
-.nameletter {
-    background-image: url('./images/desertbus.png');
-    background-position-y: -530px;
-    background-position-x: -137px;
-    width: 16px;
-    height:14px;
-    float: left;
+    font-size: 16px;
+    font-family: 'Press Start 2P';
+    color: black;
 }
 
 #tree {
     width: 32px;
     height: 48px;
-    background-image: url('./images/desertbus.png');
-    background-position-y: -560px;
-    background-position-x: -112px;
+    background-image: url('./images/tree.png');
+    image-rendering: pixelated;
+    background-position-x: 0;
     position: absolute;
     top: 80px;
     left: 439px;
     animation: spin 1s steps(6) infinite alternate;
 }
 @keyframes spin {
-    0% { background-position-x: -112px; }
+    /* 0% { background-position-x: 0; } */
 
-    100% { background-position-x: -304px ; }
+    100% { background-position-x:-600% ; }
   }

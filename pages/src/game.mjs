@@ -5,13 +5,82 @@ import * as common from '/pages/src/common.mjs';
 const doc = document.documentElement;
 let gameConnection;
 
-let odoSprite = {height: 16, width: 12, x: 0, y: -460};
-
-
 const settings = common.settingsStore.get(null, {
    saveProgress: true,
    currentProgress: 0
 });
+
+const bus = document.querySelector('#bus');
+let spriteSheet;
+let mainSpriteSheet = {width: 654, height: 1042 } ;
+let busScale = {x: 1, y: 1};
+let athlete;
+
+
+const startingCoords = new Map([
+    ['#bus', {x: 0, y: 0, h: 480, w: 640}],
+    ['#speedometer', {y: 386, x: 188, w: 64, h:64}],
+    ['#odometer', {x: 363, y: 383, h: null, w: null}],
+    ['.black', {h: 16, w: 10, bY: -460, bX: 0}],
+    ['.white', {h: 16, w: 10, bY: -460, bX: -12}],
+    ['#steering-wheel', {w: 192, h: 130, x: 42, y: 350}],
+    ['#driver-name', {w: 260, h: 30, x: 79, y:50}],
+    ['.nameletter', {w: 16, h: 16, bX: -137, bY: -530 }],
+    ['#tree', {w: 32, h: 48, x:439, y: 80}],
+    ['#needle', {h: 64, w: 64, bY: -640, bX: -192}]
+]);
+
+
+function resizeBus(){
+    const div = bus;
+    const aspectRatio = 4 / 3;
+
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const windowAspectRatio = windowWidth / windowHeight;
+  
+    if (windowAspectRatio > aspectRatio) {
+      // Window is wider than desired aspect ratio
+      const newWidth = Math.floor(windowHeight * aspectRatio / 4) * 4; //this is so we get a  multiple of 20, for the pixels 
+      div.style.width = newWidth + 'px';
+      div.style.height = newWidth / aspectRatio  + 'px';
+    } else {
+      // Window is narrower than desired aspect ratio
+      const newHeight = Math.floor(windowWidth / aspectRatio / 4) * 4;
+      div.style.width = newHeight * aspectRatio + 'px';
+      div.style.height = newHeight + 'px';
+    } 
+
+
+    busScale.x = parseInt(window.getComputedStyle(bus).getPropertyValue('width')) / startingCoords.get('#bus').w;   
+    busScale.y = parseInt(window.getComputedStyle(bus).getPropertyValue('height')) / startingCoords.get('#bus').h;   
+
+    startingCoords.forEach( function( coords, selector ) {
+        const elems = document.querySelectorAll(selector);
+        elems.forEach( (elem) => {
+            if (coords.x) elem.style.left = coords.x * busScale.x + 'px';
+            if (coords.y) elem.style.top = coords.y * busScale.y + 'px';
+            if (coords.w) elem.style.width = coords.w * busScale.x + 'px';
+            if (coords.h) elem.style.height = coords.h * busScale.y + 'px';
+
+            if (selector == '#bus') return; //don't resize the bus background
+            if (selector == '#steering-wheel') {
+                spriteSheet = {width: 768, height: 130}; //the steering wheel has its own sprite sheet
+            } else if(selector == '#tree') {
+                spriteSheet = {width: 204, height: 48}; 
+            }else {
+                spriteSheet = {width: 654, height: 1042 } // this is to make it easier to scale the sprites
+            }
+            //scale the background
+            elem.style.backgroundSize = `${spriteSheet.width * busScale.x}px ${spriteSheet.height * busScale.y}px`;
+            if (coords.bX) elem.style.backgroundPositionX = coords.bX * busScale.x + 'px';
+            if (coords.bY) elem.style.backgroundPositionY = coords.bY * busScale.y + 'px';
+
+        });
+    }); 
+    if (athlete) setDriverName(athlete.athlete.fLast.substring(0,16));
+}
+
 
 function getDigitCount(number) {
     return Math.max(Math.floor(Math.log10(Math.abs(number))), 0) + 1;
@@ -27,34 +96,20 @@ function setSpeedo(kmph){
   
     const needle = document.querySelector('#needle');
     let needleAngle;
-    if (mph > 39) {
-        needleAngle = 165;
-    } else if (mph > 35) { 
-        needleAngle = 150;
-    } else if (mph > 32) { 
-        needleAngle = 135;
-    } else if (mph >= 30) {
-        needleAngle = 120;
-    } else if (mph >= 25) {
-        needleAngle = 105;
-    }else if(mph >= 20) {
-        needleAngle = 90;
-    } else if (mph >= 15) {
-        needleAngle = 75;
-    } else if(mph > 12) {
-        needleAngle = 60;
-    }else if(mph >= 10) {
-        needleAngle = 45;
-
-    }else if(mph >= 8) {
-        needleAngle = 30;
-    } else if (mph > 0 ) {
-        needleAngle = 15;
-
+    if (mph > 1) { 
+        let minSpeed = 10;// -30 degrees
+        let maxSpeed = 70; //260
+        let  deltaSpeed = maxSpeed - minSpeed;
+        let minAngle = -15;
+        let maxAngle = 260;
+        let deltaAngle = maxAngle - minAngle;
+        let slope = deltaAngle / deltaSpeed;
+        needleAngle = minAngle + (mph - minSpeed) * slope;
+       // console.log(`mph: ${mph} angle: ${needleAngle}`);
     } else {
-        needleAngle = 0;
+        needleAngle = -45;
     }
-    needle.className = `spd-${needleAngle}`;
+    needle.style.transform = `rotate(${needleAngle}deg)`;
     
 }
 
@@ -65,38 +120,24 @@ function setTreeSpin(duration) {
 }
 
 function setDriverName(name){
-    name = name.toLowerCase();
-    let letterWidth = 16;
+
+    name = name.toUpperCase();
     let namePlate = document.querySelector('#driver-name');
-    let nameWidth = name.length * letterWidth;
-    const styles = window.getComputedStyle(namePlate);
-    const left = parseInt(styles.getPropertyValue('left'));
-    const width = parseInt(styles.getPropertyValue('width'));
+    let fontSize = 16 * busScale.x;
+    namePlate.style.fontSize = fontSize + 'px';
+    let nameWidth = name.length * fontSize;
 
-    namePlate.style.left = left + width/2 - nameWidth/2 + 'px';
-
-    for (var i = 0; i < name.length; i++) {
-       
-        let letterId;
-        if (name.charCodeAt(i) == 32){
-            letterId = 0;
-        } else {
-           letterId = name.charCodeAt(i) - 96;
-        } 
-
-        let letter = document.createElement('div');
-        letter.classList = 'nameletter';
-        letter.style.backgroundPositionX = (-128 - (letterId-1) * letterWidth) + 'px';
-
-        namePlate.appendChild(letter);
-    }
+    let left = parseInt(window.getComputedStyle(namePlate).getPropertyValue('left'));
+    namePlate.style.left = left + nameWidth/2 + 'px';
+   
+    namePlate.innerHTML = name;
 }
 
 function setOdo(meters) {
     let odo = document.querySelector('#odometer');
 
     //desert bus is in Miles, because America
-    let miles = (meters / 1609.344);
+    let miles = meters/100; //(meters / 1609.344);
     //multiply it by 10 because I hate dealing with decimals
     miles = miles * 10;
 
@@ -104,48 +145,59 @@ function setOdo(meters) {
     for (const digit of digits){
         let place = digit.dataset.place;
         if (place == 1){ //decimal gets special handling
-            digit.dataset.number = miles / Math.pow(10, place - 1) % 10;
+            digit.dataset.number = (miles / Math.pow(10, place - 1) % 10).toFixed(1);
             renderOdoNumber(digit);
         } else {
-            digit.dataset.number = getDigit(miles, place);
-            animateOdoNumber(digit);
+            let oldNumber = digit.dataset.number;
+            let newNumber = getDigit(miles, place);
+            if (oldNumber != newNumber) {
+                digit.dataset.number = newNumber;
+                console.log(`${place} from ${oldNumber} to ${newNumber}`);
+                animateOdoNumber(digit);
+            }
         }
     
     }
 }
 //renders the odo wheel relative to how close it is to the next
 function renderOdoNumber(digitElem){
-    let currentNumber = digitElem.dataset.number;
+    const odoSprite = startingCoords.get('.black'); //math is the same for both
+    let currentNumber = digitElem.dataset.number; // get the number from the element
 
-    let wholeBgY = odoSprite.y - odoSprite.height * currentNumber;
+    //find thebackground location for the whole number
+    let wholeBgY = odoSprite.bY * busScale.y - odoSprite.h * busScale.y * currentNumber;
     let newBgY = wholeBgY;
     digitElem.style.backgroundPositionY = newBgY + 'px';
 }
 
 //animates a flip to the next number
 function animateOdoNumber(digitElem){
+    const odoSprite = startingCoords.get('.black'); //math is the same for both
+
     let currentNumber = digitElem.dataset.number;
 
     let currentBgY = window.getComputedStyle(digitElem).getPropertyValue("background-position-y");
-    let newBgY = odoSprite.y - odoSprite.height * currentNumber;
+    let unscaledBgY = odoSprite.bY - (odoSprite.h * currentNumber);
+    let newBgY = busScale.y * unscaledBgY;
+
     const numberRoll = [
-        { backgroundPositionY: currentBgY },
+        { backgroundPositionY: currentBgY},
         { backgroundPositionY: newBgY + 'px' }
     ]
 
     const rollTiming = {
-        duration: 1000,
+        duration: 500,
         iterations: 1
     }
 
     digitElem.animate(numberRoll, rollTiming);
-
-
-}
+    digitElem.style.backgroundPositionY = newBgY + 'px';
+}   
 
 
 export async function main() {
     common.initInteractionListeners();
+    window.addEventListener('resize', resizeBus);
   
 
     const gcs = await common.rpc.getGameConnectionStatus();
@@ -161,6 +213,7 @@ export async function main() {
             startDistance = watching.state.distance;
             setDriverName(watching.athlete.fLast.substring(0,16));
             console.log(watching);
+            athlete = watching;
         }
         
         odoDistance = watching.state.distance - startDistance;
