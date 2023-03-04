@@ -137,7 +137,7 @@ function setOdo(meters) {
     let odo = document.querySelector('#odometer');
 
     //desert bus is in Miles, because America
-    let miles = meters/100; //(meters / 1609.344);
+    let miles = meters / 1609.344;
     //multiply it by 10 because I hate dealing with decimals
     miles = miles * 10;
 
@@ -152,7 +152,7 @@ function setOdo(meters) {
             let newNumber = getDigit(miles, place);
             if (oldNumber != newNumber) {
                 digit.dataset.number = newNumber;
-                console.log(`${place} from ${oldNumber} to ${newNumber}`);
+              //  console.log(`${place} from ${oldNumber} to ${newNumber}`);
                 animateOdoNumber(digit);
             }
         }
