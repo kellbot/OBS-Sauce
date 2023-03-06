@@ -1,4 +1,7 @@
 /* Layout */
+html:not(.electron-mode) body { background: transparent !important; }
+
+html:not(.electron-mode) { background-color: #00000000 !important; } 
 
 body {
 	
@@ -28,13 +31,21 @@ body {
 
 }
 #sidebar {
-	position: absolute;
-	top: 0px;
+
 	padding: 5px;
-	height: 1080px;
-	width: 550px;
+	width: 100%;
 	background-color: #111111;
 } 
+#overlay-sidebar {
+	position: absolute;
+	top: 0px;
+	height: 1080px;
+	width: 550px;
+}
+/* #isolated-sidebar
+{
+	width: 480px;
+} */
 
 #right-section{
 	position: absolute;
@@ -102,14 +113,14 @@ body {
 
 #name {
 	float: left;
-	width: 295px;
+	width: calc(64% - 8px);
 	font-weight: 600;
 	font-size: 25px;
 }
 #timer {
 				
 	float: left;
-	width: 225px;
+	width: 33%;
 	font-weight: 600;
 	font-size: 25px;
 }

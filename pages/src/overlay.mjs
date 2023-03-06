@@ -5,8 +5,8 @@ import{  renderNotes } from './course-notes.mjs';
 
 const doc = document.documentElement;
 const trackOverlay = doc.querySelector('#lap .meter .segments');
-const timer = doc.querySelector('#timer');
-const nameDiv = doc.querySelector('#name');
+
+
 const newTeamDiv = doc.querySelector('#new-team');
 const L = sauce.locale;
 const H = L.human;
@@ -80,6 +80,9 @@ let leader_distance; //used in TTT mode
 let activeRider;
 
 let myChart;
+
+const sidebarEl = document.getElementById('sidebar');
+
 
 function parseDelimitedString(str) {
     // check if the string is comma delimited
@@ -437,16 +440,16 @@ async function renderStats(watching) {
     let riderTime = toHoursAndMinutes(watching.state.time);
     let courseProgress = watching.state.progress * 100;
 
-    timer.innerHTML =
+    sidebarEl.querySelector('#timer').innerHTML =
         riderTime.h + ":" + riderTime.m.toString().padStart(2, 0) + ":" + riderTime.s.toString().padStart(2, 0);
 
-    doc.querySelector('#lap .track').style.width = courseProgress + "%";
-    doc.querySelector('#lap .trackLabel').innerHTML = (watching.state.distance / 1000).toFixed(2) + " km";
-    doc.querySelector('#current-hr').innerHTML = hrvalue;
-    doc.querySelector('#current-power').innerHTML = power;
-    doc.querySelector('#current-draft').innerHTML = draft + "%";
-    if (watching.stats.speed.smooth[60]) doc.querySelector('#speed-1m').innerHTML = watching.stats.speed.smooth[60].toFixed(1);
-    if (watching.stats.speed.avg) doc.querySelector('#speed-a').innerHTML = watching.stats.speed.avg.toFixed(1);
+    sidebarEl.querySelector('#lap .track').style.width = courseProgress + "%";
+    sidebarEl.querySelector('#lap .trackLabel').innerHTML = (watching.state.distance / 1000).toFixed(2) + " km";
+    sidebarEl.querySelector('#current-hr').innerHTML = hrvalue;
+    sidebarEl.querySelector('#current-power').innerHTML = power;
+    sidebarEl.querySelector('#current-draft').innerHTML = draft + "%";
+    if (watching.stats.speed.smooth[60]) sidebarEl.querySelector('#speed-1m').innerHTML = watching.stats.speed.smooth[60].toFixed(1);
+    if (watching.stats.speed.avg) sidebarEl.querySelector('#speed-a').innerHTML = watching.stats.speed.avg.toFixed(1);
 
 
     if (debugOn) console.log(watching);
@@ -646,6 +649,9 @@ export async function main() {
     console.log("Sauce Version:", await common.rpc.getVersion());
 
 
+    const sidebarTpl = await sauce.template.getTemplate('templates/sidebar.html.tpl');
+
+    sidebarEl.append(await sidebarTpl());
     let settings = common.settingsStore.get();
 
     debugOn = common.settingsStore.get('debugOn');
@@ -675,7 +681,7 @@ export async function main() {
     common.subscribe('athlete/watching', watching => {
         if (watching.athleteId !== athleteId) {
             athleteId = watching.athleteId;
-            
+            const nameDiv = sidebarEl.querySelector('#name');
             nameDiv.innerHTML = watching.athlete.fullname.substring(0,20);
             if (debugOn) console.log(watching);
         }

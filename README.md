@@ -20,6 +20,9 @@ If you want to easily update the mod or try experimental features you can clone 
 ### Overlay
 This is the browser source for OBS, and cannot be added as a widget by itself. It is designed to be used at 1920 x 1080.
 
+### Sidebar
+You can use the sidebar from the overlay by itself as a browser source. Suggested widths are between about 425px and 600px.
+
 ### Team Rosters
 You can optionally filter the nearby riders list by a pre-configured list of riders. This is helpful if you race with multiple teams and don't want to mark / unmark everyone for each race. To set up a team open the server URL in a browser window, then click "Settings" under OBS. Click "Create team" and enter a team name followed by a list of comma delimited Zwift ID numbers (`123, 1235, 6543, 1235`); Then select that team from the dropdown menu. When `TTT mode` is selected in settings the roster will be filtered by this list.
 
@@ -37,7 +40,7 @@ These settings only affect the Sauce widget windows, not anything within OBS (wh
 ## Configuration
 * Start sauce
 * Open Sauce's settings by clicking on the gear icon in the Sauce toolbar. Click on the "Windows" tab and scroll down until you see the mod. Click the checkbox to enable it. You may need to restart Sauce.
-* Open the settings again and click on the URL of the server (most likely with a bunch of numbers in it). Click the link to open it in a new browser window. Scroll down and click on either "OBS Overlay" or "Desert Bus." Copy the URL of the resulting page.
+* Open the settings again and click on the URL of the server (most likely with a bunch of numbers in it). Click the link to open it in a new browser window. Scroll down and click on either "OBS Overlay", "Sidebar" or "Desert Bus." Copy the URL of the resulting page.
 * Create a new [Browser source](https://obsproject.com/kb/browser-source) in OBS. Enter the URL from the previous step.
 * Set the width and height to 1920 and 1080, respectively.
 * Once you start Zwift your data should show up on screen.

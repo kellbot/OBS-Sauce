@@ -11,8 +11,6 @@
 <link rel="stylesheet" href="/pages/css/common.css"/>
 <link href="./utils.css" rel="stylesheet" />
 
-<link href="./course-notes.css" rel="stylesheet" />
-
 <link href="./layout.css" rel="stylesheet" />
 
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2"></script>
@@ -26,51 +24,30 @@
 	</script>
 </head>
 <body>
-	<div id="titlebar">
+
+    <div id="titlebar">
         <header>
             <div class="logo"><img src="/pages/images/icon128.png"/></div>
             <div class="title">OBS Overlay</div>
             <div class="filler"></div>
             <div class="buttons">
                 <a class="button open-settings" href="overlay-settings.html?width=1150&height=0.7&child-window"
-                   title="Open settings window" target="nearby-settings"><ms>settings</ms></a>
+                title="Open settings window" target="nearby-settings"><ms>settings</ms></a>
                 <div title="Minimize" class="button minimize electron-only"><ms>minimize</ms></div>
                 <div title="Close this window" class="button close electron-only"><ms>close</ms></div>
             </div>
         </header>
     </div>
-	<div id="window">
-		Please open this page in a browser or OBS browser source.
-	</div>
-<div id="overlay">
-	<div id="overlay-sidebar">
-		<div id="sidebar">
-		</div>
-	</div>
-	<div id="right-section">
-		<div id="zwift">
-		</div>
+    <div id="window">
+        Please open this page in a browser or OBS browser source.
+    </div>
+    <div id="isolated-sidebar">
+
+        <div id="sidebar">
+        </div>
 
 
-	</div>
-	<div id="bottom-bar">
-		<div class="section">
-			
-			<div id="section-progress">
-				<div class="meter">
-					<div class="track"><div class="trackLabel">23</div></div>
-				</div>
-				
-				<label>Section Progress</label>
-			</div>
-			
-			<div id="course-notes"></div>
-		</div>
-		<div id="chat">
-			
-		</div>
-	
-	</div>
-</div>
+    </div>
+
 </body>
 </html>

@@ -16,6 +16,21 @@
         "overlay": true,
         "frame": true,
         "default_bounds": {
+            "width":480,
+            "height": 500,
+            "x": 100,
+            "y": -100
+        }
+    },
+    {
+        "file": "pages/sidebar.html",
+        "id": "obs-sidebar",
+        "name": "OBS Sidebar",
+        "description": "The overlay sidebar by itself",
+        "always_visible": false,
+        "overlay": true,
+        "frame": true,
+        "default_bounds": {
             "width": 0.5,
             "height": 500,
             "x": 100,
