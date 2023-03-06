@@ -12,6 +12,12 @@ let mainSpriteSheet = {width: 654, height: 1042 } ;
 let busScale = {x: 1, y: 1};
 let athlete;
 
+common.settingsStore.setDefault({
+    dbEasyMode : true,
+    dbMeterage: 0
+});
+
+let settings = common.settingsStore.get();
 
 const startingCoords = new Map([
     ['#bus', {x: 0, y: 0, h: 480, w: 640}],
@@ -197,6 +203,12 @@ export async function main() {
     let athleteId;
     let startDistance;
     let odoDistance;
+    // common.settingsStore.addEventListener('changed', ev => {
+    //     const changed = ev.data.changed;
+    //     if (changed.has('dbEasyMode')) {
+    //         odoDistance = settings.dbMileage;
+    //     }
+    // });
 
     common.subscribe('athlete/watching', watching => {
         if (watching.athleteId !== athleteId) { //new rider
@@ -206,8 +218,16 @@ export async function main() {
             console.log(watching);
             athlete = watching;
         }
+        if (!settings.dbMeterage) settings.dbMeterage = 0;
         
         odoDistance = watching.state.distance - startDistance;
+        if (settings.dbEasyMode) {
+            startDistance = watching.state.distance; //reset start to where we are now
+            odoDistance = odoDistance +  settings.dbMeterage; //add saved distance to odo
+            console.log(odoDistance);
+            common.settingsStore.set('dbMeterage', odoDistance);
+        }
+
 
         setOdo(odoDistance);
         setSpeedo(watching.state.speed);
