@@ -43,3 +43,7 @@ These settings only affect the Sauce widget windows, not anything within OBS (wh
 * Once you start Zwift your data should show up on screen.
 * Configure the mod options by clicking "Interact" in OBS and then right-clicking anywhere on the screen to bring up the toolbar. Click the gear icon to go to the settings page. **Note: this will be visible on stream!**
 * Alternately, if yo have [Source dock](https://obsproject.com/forum/resources/source-dock.1317/) installed you can create a separate source for the settings panel and dock it to OBS
+
+## FAQ
+### Q: How can I add Twitch alerts / chat to the layout?
+You will need to use a separate alert provider and create a browser source for each alert. [KapChat](https://nightdev.com/kapchat) is very easy to set up for chat. For more advanced options try Streamlabs' alert box. 
