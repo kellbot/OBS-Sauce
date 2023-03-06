@@ -25,13 +25,14 @@ common.settingsStore.setDefault({
     debugOn: false,
     tttMode: false,
     teams: {},
-    teamSelect: null,
+    teamSelect: 'marked',
     rosterData1: 'gap',
     rosterData2: 'draft',
     saveProgress: false,
     currentProgress: 0,
 });
 
+let settings = common.settingsStore.get();
 
 let team;
 
@@ -484,7 +485,7 @@ export async function main() {
     let lastRefresh = 0;
     common.subscribe('nearby', data => {
         if (ttt_mode) {
-            if (settings.teamSelect) {
+            if (settings.teamSelect && settings.teamSelect != 'marked') {
                 let team = settings.teams[settings.teamSelect];
                 
                 data = data.filter(x => x.watching || (x.athlete && team.roster.includes(x.athlete.id) ));
@@ -492,7 +493,6 @@ export async function main() {
                 data = data.filter(x => x.watching || (x.athlete && x.athlete.marked));
             }
         }
-        nearbyData = data;
         const elapsed = Date.now() - lastRefresh;
         if (elapsed >= refresh) {
             lastRefresh = Date.now();
@@ -528,6 +528,12 @@ async function renderTeamsList(){
     for (let i = teamTable.rows.length - 1; i > 0; i--) {
         teamTable.deleteRow(i);
     }
+
+    //option to get marked riders
+    let markedOption = document.createElement("option");
+    markedOption.text = "All marked athletes";
+    markedOption.value = 'marked';
+    teamSelect.add(markedOption);
 
     for (team in teams){
         let teamSlug = removeNonLetters(teams[team].name);
@@ -665,18 +671,14 @@ function renderRoster(data) {
 
     data.sort((a, b) => a.distance - b.distance);
     const centerIdx = data.findIndex(x => x.watching); //find where we are in the data
-    if (ttt_mode) {
-        riders = data;
-    } else {
-        let rosterCount = common.settingsStore.get('rosterCount');
-        let above = Math.ceil(rosterCount / 2);
-        let below = rosterCount - above;
-        riders = data.slice(centerIdx - above, centerIdx + below); //get athletes on either side of us
-    }
 
-    if (riders.length > 1) leader_distance = riders[0].state.distance;
+    let rosterCount = common.settingsStore.get('rosterCount');
+    let above = Math.ceil(rosterCount / 2);
+    let below = rosterCount - above;
+    riders = data.slice(centerIdx - above, centerIdx + below); //get athletes on either side of us
 
-    //Would be nice to update rather than nuke this
+
+    //TODO: Would be nice to update rather than nuke this
     if (riders.length > 0) {
         tbody.innerHTML = '';
         for (let i = 0; i < riders.length; i++) {
