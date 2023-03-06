@@ -2,10 +2,10 @@ html:not(.electron-mode), html body {
     background: transparent;
 }
 #bus {
-    width: 640px;
-    height: 480px;
-    background: url('./images/bus.png') 0 0;
-    background-size: auto 100%;
+    width: 1280px;
+    height: 960px;
+    background: url('./images/bus-4x.png') 0 0;
+    
     image-rendering: pixelated;
     
 }

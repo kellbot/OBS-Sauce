@@ -8,23 +8,25 @@ let gameConnection;
 
 const bus = document.querySelector('#bus');
 let spriteSheet;
-let mainSpriteSheet = {width: 654, height: 1042 } ;
+let sprites = new Map([
+    ['#bus', {width: 640, height: 480 }], ['#steering-wheel', {width: 768, height: 130}], ['#tree', {width: 204, height: 48}], ['default', {width: 654, height: 1042 }]
+]);
 let busScale = {x: 1, y: 1};
 let athlete;
 
-common.settingsStore.setDefault({
-    dbEasyMode : true,
-    dbMeterage: 0
-});
 
-let settings = common.settingsStore.get();
+let settings = common.settingsStore.get(null, {
+    dbEasyMode : true,
+    dbMeterage: 0,
+    dbResolution: 'fourx',
+});
 
 const startingCoords = new Map([
     ['#bus', {x: 0, y: 0, h: 480, w: 640}],
     ['#speedometer', {y: 386, x: 188, w: 64, h:64}],
-    ['#odometer', {x: 363, y: 383, h: null, w: null}],
-    ['.black', {h: 16, w: 10, bY: -460, bX: 0}],
-    ['.white', {h: 16, w: 10, bY: -460, bX: -12}],
+    ['#odometer', {x: 364, y: 386, h: null, w: null}],
+    ['.black', {h: 16, w: 10, bY: -464, bX: 1}],
+    ['.white', {h: 16, w: 10, bY: -464, bX: -12}],
     ['#steering-wheel', {w: 192, h: 130, x: 42, y: 350}],
     ['#driver-name', {w: 260, h: 30, x: 79, y:50}],
     ['#tree', {w: 32, h: 48, x:439, y: 80}],
@@ -35,26 +37,36 @@ const startingCoords = new Map([
 function resizeBus(){
     const div = bus;
     const aspectRatio = 4 / 3;
-
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    const windowAspectRatio = windowWidth / windowHeight;
-  
-    if (windowAspectRatio > aspectRatio) {
-      // Window is wider than desired aspect ratio
-      const newWidth = Math.floor(windowHeight * aspectRatio / 4) * 4; //this is so we get a  multiple of 20, for the pixels 
-      div.style.width = newWidth + 'px';
-      div.style.height = newWidth / aspectRatio  + 'px';
+    const sizes = new Map([['qvga', {w: 320, h:240}],['vga', {w: 640, h: 480} ], ['fourx', {w: 1280, h: 960} ], ['uxga', {w: 1600, h: 1200} ]]);
+    if(settings.dbResolution == 'free') {
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const windowAspectRatio = windowWidth / windowHeight;
+    
+        if (windowAspectRatio > aspectRatio) {
+        // Window is wider than desired aspect ratio
+        const newWidth = Math.floor(windowHeight * aspectRatio / 4) * 4; //this is so we get a  multiple of 20, for the pixels 
+        div.style.width = newWidth + 'px';
+        div.style.height = newWidth / aspectRatio  + 'px';
+        } else {
+        // Window is narrower than desired aspect ratio
+        const newHeight = Math.floor(windowWidth / aspectRatio / 4) * 4;
+        div.style.width = newHeight * aspectRatio + 'px';
+        div.style.height = newHeight + 'px';
+        } 
     } else {
-      // Window is narrower than desired aspect ratio
-      const newHeight = Math.floor(windowWidth / aspectRatio / 4) * 4;
-      div.style.width = newHeight * aspectRatio + 'px';
-      div.style.height = newHeight + 'px';
-    } 
+
+        let size = sizes.get(settings.dbResolution);
+
+        div.style.width = size.w + 'px';
+        div.style.height = size.h + 'px';
+    }
 
 
-    busScale.x = parseInt(window.getComputedStyle(bus).getPropertyValue('width')) / startingCoords.get('#bus').w;   
-    busScale.y = parseInt(window.getComputedStyle(bus).getPropertyValue('height')) / startingCoords.get('#bus').h;   
+    busScale.x = parseInt(div.style.width) / startingCoords.get('#bus').w;   
+    busScale.y = parseInt(div.style.height) / startingCoords.get('#bus').h;   
+
+    console.log(busScale);
 
     startingCoords.forEach( function( coords, selector ) {
         const elems = document.querySelectorAll(selector);
@@ -64,13 +76,10 @@ function resizeBus(){
             if (coords.w) elem.style.width = coords.w * busScale.x + 'px';
             if (coords.h) elem.style.height = coords.h * busScale.y + 'px';
 
-            if (selector == '#bus') return; //don't resize the bus background
-            if (selector == '#steering-wheel') {
-                spriteSheet = {width: 768, height: 130}; //the steering wheel has its own sprite sheet
-            } else if(selector == '#tree') {
-                spriteSheet = {width: 204, height: 48}; 
-            }else {
-                spriteSheet = {width: 654, height: 1042 } // this is to make it easier to scale the sprites
+            if (sprites.get(selector)) {
+                spriteSheet = sprites.get(selector);
+            } else {
+                spriteSheet = sprites.get('default');
             }
             //scale the background
             elem.style.backgroundSize = `${spriteSheet.width * busScale.x}px ${spriteSheet.height * busScale.y}px`;
@@ -193,9 +202,12 @@ function animateOdoNumber(digitElem){
 
 
 export async function main() {
-    common.initInteractionListeners();
+    common.initInteractionListeners(); 
+
     window.addEventListener('resize', resizeBus);
     resizeBus();
+
+
 
     const gcs = await common.rpc.getGameConnectionStatus();
     gameConnection = !!(gcs && gcs.connected);
@@ -203,12 +215,12 @@ export async function main() {
     let athleteId;
     let startDistance;
     let odoDistance;
-    // common.settingsStore.addEventListener('changed', ev => {
-    //     const changed = ev.data.changed;
-    //     if (changed.has('dbEasyMode')) {
-    //         odoDistance = settings.dbMileage;
-    //     }
-    // });
+    common.settingsStore.addEventListener('changed', ev => {
+        const changed = ev.data.changed;
+        if (changed.has('dbResolution')) {
+            resizeBus();
+        }
+    });
 
     common.subscribe('athlete/watching', watching => {
         if (watching.athleteId !== athleteId) { //new rider

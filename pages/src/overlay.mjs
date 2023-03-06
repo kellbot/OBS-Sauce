@@ -16,7 +16,26 @@ L.setImperial(imperial);
 
 let gameConnection;
 
-common.settingsStore.setDefault({
+// common.settingsStore.setDefault({ 
+//     autoscroll: true,
+//     refreshInterval: 2,
+//     overlayMode: false,
+//     rosterCount: 6,
+//     pzRangeDefinition: 'zwift',
+//     debugOn: false,
+//     tttMode: false,
+//     teams: {},
+//     teamSelect: null,
+//     rosterData1: 'gap',
+//     rosterData2: 'draft',
+//     saveProgress: false,
+//     currentProgress: 0,
+//     dbEasyMode : true,
+//     dbMeterage: 0,
+//     dbResolution: 'fourx',
+// });
+
+let settings = common.settingsStore.get(null, {
     autoscroll: true,
     refreshInterval: 2,
     overlayMode: false,
@@ -30,6 +49,9 @@ common.settingsStore.setDefault({
     rosterData2: 'draft',
     saveProgress: false,
     currentProgress: 0,
+    dbEasyMode : true,
+    dbMeterage: 0,
+    dbResolution: 'fourx',
 });
 
 
@@ -430,79 +452,7 @@ async function renderStats(watching) {
     if (debugOn) console.log(watching);
 }
 
-export async function main() {
-    common.initInteractionListeners();
-    console.log("Sauce Version:", await common.rpc.getVersion());
 
-
-    let settings = common.settingsStore.get();
-
-    debugOn = common.settingsStore.get('debugOn');
-
-    let refresh;
-    const setRefresh = () => {
-        refresh = (1) * 1000 - 100; // within 100ms is fine.
-    };
-
-
-    common.settingsStore.addEventListener('changed', ev => {
-        const changed = ev.data.changed;
-        if (changed.has('/imperialUnits')) {
-            L.setImperial(imperial = changed.get('/imperialUnits'));
-        }
-        if (changed.has('tttMode')) {
-            ttt_mode = changed.get('tttMode');
-        }
-    });
-
-
-    const gcs = await common.rpc.getGameConnectionStatus();
-    gameConnection = !!(gcs && gcs.connected);
-
-    let athleteId;
-
-    common.subscribe('athlete/watching', watching => {
-        if (watching.athleteId !== athleteId) {
-            athleteId = watching.athleteId;
-            
-            nameDiv.innerHTML = watching.athlete.fullname.substring(0,20);
-            if (debugOn) console.log(watching);
-        }
-        activeRider = watching;
-        if( watching.athlete ) {
-            renderStats(watching);
-            renderNotes(watching);
-        }
-
-    });
-
-    ttt_mode = common.settingsStore.get('tttMode');
-    pzMode = common.settingsStore.get('pzRangeDefinition');
-
-
-    setRefresh();
-    let lastRefresh = 0;
-    common.subscribe('nearby', data => {
-        if (ttt_mode) {
-            if (settings.teamSelect) {
-                let team = settings.teams[settings.teamSelect];
-                
-                data = data.filter(x => x.watching || (x.athlete && team.roster.includes(x.athlete.id) ));
-            } else {
-                data = data.filter(x => x.watching || (x.athlete && x.athlete.marked));
-            }
-        }
-        nearbyData = data;
-        const elapsed = Date.now() - lastRefresh;
-        if (elapsed >= refresh) {
-            lastRefresh = Date.now();
-            renderRoster(data);
-        }
-
-    });
-
-
-}
 function getTeam(teamSlug) {
     let teams = common.settingsStore.get('teams');
     return teams[teamSlug];
@@ -606,7 +556,7 @@ async function initTeamsPanel() {
         }
         if (link.classList.contains('team-delete')) {
             let teamSlug = link.getAttribute('data-team');
-            let teams = common.settingsStore.get('teams');
+            let teams = settings.teams;
             delete teams[teamSlug];
             common.settingsStore.set('teams', teams);
         } else if (link.classList.contains('team-edit')) {
@@ -668,7 +618,7 @@ function renderRoster(data) {
     if (ttt_mode) {
         riders = data;
     } else {
-        let rosterCount = common.settingsStore.get('rosterCount');
+        let rosterCount = settings.rosterCount;
         let above = Math.ceil(rosterCount / 2);
         let below = rosterCount - above;
         riders = data.slice(centerIdx - above, centerIdx + below); //get athletes on either side of us
@@ -687,6 +637,80 @@ function renderRoster(data) {
         }
     }
 
+
+
+}
+
+export async function main() {
+    common.initInteractionListeners();
+    console.log("Sauce Version:", await common.rpc.getVersion());
+
+
+    let settings = common.settingsStore.get();
+
+    debugOn = common.settingsStore.get('debugOn');
+
+    let refresh;
+    const setRefresh = () => {
+        refresh = (1) * 1000 - 100; // within 100ms is fine.
+    };
+
+
+    common.settingsStore.addEventListener('changed', ev => {
+        const changed = ev.data.changed;
+        if (changed.has('/imperialUnits')) {
+            L.setImperial(imperial = changed.get('/imperialUnits'));
+        }
+        if (changed.has('tttMode')) {
+            ttt_mode = changed.get('tttMode');
+        }
+    });
+
+
+    const gcs = await common.rpc.getGameConnectionStatus();
+    gameConnection = !!(gcs && gcs.connected);
+
+    let athleteId;
+
+    common.subscribe('athlete/watching', watching => {
+        if (watching.athleteId !== athleteId) {
+            athleteId = watching.athleteId;
+            
+            nameDiv.innerHTML = watching.athlete.fullname.substring(0,20);
+            if (debugOn) console.log(watching);
+        }
+        activeRider = watching;
+        if( watching.athlete ) {
+            renderStats(watching);
+            renderNotes(watching);
+        }
+
+    });
+
+    ttt_mode = common.settingsStore.get('tttMode');
+    pzMode = common.settingsStore.get('pzRangeDefinition');
+
+
+    setRefresh();
+    let lastRefresh = 0;
+    common.subscribe('nearby', data => {
+        if (ttt_mode) {
+            if (settings.teamSelect) {
+                let team = settings.teams[settings.teamSelect];
+                
+                data = data.filter(x => x.watching || (x.athlete && team.roster.includes(x.athlete.id) ));
+            } else {
+                data = data.filter(x => x.watching || (x.athlete && x.athlete.marked));
+            }
+        }
+        nearbyData = data;
+        const elapsed = Date.now() - lastRefresh;
+        if (elapsed >= refresh) {
+            lastRefresh = Date.now();
+            renderRoster(data);
+        }
+
+    });
 
 
 }
