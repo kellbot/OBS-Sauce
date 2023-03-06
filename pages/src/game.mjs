@@ -5,10 +5,6 @@ import * as common from '/pages/src/common.mjs';
 const doc = document.documentElement;
 let gameConnection;
 
-const settings = common.settingsStore.get(null, {
-   saveProgress: true,
-   currentProgress: 0
-});
 
 const bus = document.querySelector('#bus');
 let spriteSheet;
@@ -25,7 +21,6 @@ const startingCoords = new Map([
     ['.white', {h: 16, w: 10, bY: -460, bX: -12}],
     ['#steering-wheel', {w: 192, h: 130, x: 42, y: 350}],
     ['#driver-name', {w: 260, h: 30, x: 79, y:50}],
-    ['.nameletter', {w: 16, h: 16, bX: -137, bY: -530 }],
     ['#tree', {w: 32, h: 48, x:439, y: 80}],
     ['#needle', {h: 64, w: 64, bY: -640, bX: -192}]
 ]);
@@ -125,11 +120,7 @@ function setDriverName(name){
     let namePlate = document.querySelector('#driver-name');
     let fontSize = 16 * busScale.x;
     namePlate.style.fontSize = fontSize + 'px';
-    let nameWidth = name.length * fontSize;
-
-    let left = parseInt(window.getComputedStyle(namePlate).getPropertyValue('left'));
-    namePlate.style.left = left + nameWidth/2 + 'px';
-   
+ 
     namePlate.innerHTML = name;
 }
 
@@ -198,7 +189,7 @@ function animateOdoNumber(digitElem){
 export async function main() {
     common.initInteractionListeners();
     window.addEventListener('resize', resizeBus);
-  
+    resizeBus();
 
     const gcs = await common.rpc.getGameConnectionStatus();
     gameConnection = !!(gcs && gcs.connected);

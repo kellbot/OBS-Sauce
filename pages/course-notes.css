@@ -32,9 +32,9 @@ html.electron-mode.solid-background body {
   height: 36px;
 }
 
-html:not(.electron-mode)  #titlebar {
+/* html:not(.electron-mode)  #titlebar {
 display: none;
-}
+} */
 html:not(.electron-mode) body { background: transparent !important; }
 
 html:not(.electron-mode) { background-color: #00000000 !important; } 

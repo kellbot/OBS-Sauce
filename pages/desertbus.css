@@ -78,7 +78,7 @@ html:not(.electron-mode), html body {
     
 }
 #driver-name {
-    width: 260px;
+    text-align: center;
     height: 30px;
     position: absolute;
     top: 50px;

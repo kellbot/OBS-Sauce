@@ -28,6 +28,8 @@ common.settingsStore.setDefault({
     teamSelect: null,
     rosterData1: 'gap',
     rosterData2: 'draft',
+    saveProgress: false,
+    currentProgress: 0,
 });
 
 
@@ -429,10 +431,10 @@ async function renderStats(watching) {
 }
 
 export async function main() {
-
+    common.initInteractionListeners();
     console.log("Sauce Version:", await common.rpc.getVersion());
 
-    //common.initInteractionListeners();
+
     let settings = common.settingsStore.get();
 
     debugOn = common.settingsStore.get('debugOn');
@@ -476,15 +478,7 @@ export async function main() {
 
     ttt_mode = common.settingsStore.get('tttMode');
     pzMode = common.settingsStore.get('pzRangeDefinition');
-    // //Mark the team
-    // if (ttt_mode) {
-    //     for (const i in team) {
-    //         let teammateId = team[i].athleteId;
-    //         const teammate = await common.rpc.getAthlete(teammateId, { refresh: true });
-    //         if (debugOn) console.log(teammate);
-    //         if (teammate) await common.rpc.updateAthlete(teammateId, { marked: true });
-    //     }
-    // }
+
 
     setRefresh();
     let lastRefresh = 0;
@@ -702,4 +696,10 @@ export async function settingsMain() {
     common.initInteractionListeners();
     await common.initSettingsForm('form')();
     await initTeamsPanel();
+    if (!window.isElectron) { 
+        const close = document.querySelector('#titlebar .button.close');
+        if (close) {
+            close.addEventListener('click', ev => history.back());
+        }
+    }
 }
