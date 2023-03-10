@@ -13,6 +13,7 @@ let sprites = new Map([
 ]);
 let busScale = {x: 1, y: 1};
 let athlete;
+let previous_heading;
 
 
 let settings = common.settingsStore.get(null, {
@@ -200,6 +201,20 @@ function animateOdoNumber(digitElem){
     digitElem.style.backgroundPositionY = newBgY + 'px';
 }   
 
+function spinWheel(heading) {
+    let delta = previous_heading - heading;
+    if ( Math.abs(delta)> 45 ){
+        let wheel = document.getElementById('steering-wheel');
+        if (delta > 0 ) {
+            wheel.classList = 'left';
+        } else {
+            wheel.classList = 'right';
+        }
+        previous_heading = heading;
+    } 
+    console.log(delta);
+}
+
 
 export async function main() {
     common.initInteractionListeners(); 
@@ -227,8 +242,10 @@ export async function main() {
             athleteId = watching.athleteId;
             startDistance = watching.state.distance;
             setDriverName(watching.athlete.fLast.substring(0,16));
+            previous_heading = watching.state.heading
             console.log(watching);
             athlete = watching;
+
         }
         if (!settings.dbMeterage) settings.dbMeterage = 0;
         
@@ -246,6 +263,7 @@ export async function main() {
 
         let treeDuration = (20 / watching.state.cadence) + 's';
         setTreeSpin(treeDuration);
+        spinWheel(watching.state.heading)
     });
 
 

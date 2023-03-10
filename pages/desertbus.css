@@ -70,7 +70,14 @@ html:not(.electron-mode), html body {
     position: absolute;
     top: 350px;
     left: 42px;
-    animation: steer 2.5s steps(4) infinite alternate;
+}
+#steering-wheel.left {
+    
+    animation: steer 2.5s steps(4);
+}
+#steering-wheel.right {
+    
+    animation: steer 2.5s steps(4) reverse;
 }
 @keyframes steer {
     100% {background-position-x: -400%;}
