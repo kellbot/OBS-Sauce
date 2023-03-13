@@ -64,25 +64,34 @@ html:not(.electron-mode), html body {
     background-image: url('./images/steering.png');
 
     image-rendering: pixelated;
-    background-position-x: 0;
+    background-position-x: -300%;
     width: 192px;
     height: 130px;
     position: absolute;
     top: 350px;
     left: 42px;
 }
+/* #steering-wheel.reset {
+ 
+    background-position-x: 100%;    
+    animation: reset 0.5s steps(4) forwards;
+    animation-iteration-count: 1;
+/*     
+    animation-fill-mode: forwards; 
+} */
 #steering-wheel.left {
     
-    animation: steer 2.5s steps(4);
-}
-#steering-wheel.right {
-    
-    animation: steer 2.5s steps(4) reverse;
+    animation: steer 2.5s steps(4) forwards;
+    animation-iteration-count: 1;
+     
+    animation-fill-mode: forwards;
+
 }
 @keyframes steer {
-    100% {background-position-x: -400%;}
- 
-    
+    100% {background-position-x: 100%;} 
+}
+@keyframes reset {
+    100% {background-position-x: -300%;} 
 }
 #driver-name {
     text-align: center;

@@ -1,6 +1,6 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
-import { dsNotes } from '../ds-notes.mjs';
+import { dsNotes } from './ds-notes.mjs';
 
 const doc = document.documentElement;
 let gameConnection;

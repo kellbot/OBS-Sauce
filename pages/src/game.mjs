@@ -1,5 +1,6 @@
 import * as sauce from '/shared/sauce/index.mjs';
 import * as common from '/pages/src/common.mjs';
+import * as dev from './dev-tools.mjs';
 
 
 const doc = document.documentElement;
@@ -13,7 +14,8 @@ let sprites = new Map([
 ]);
 let busScale = {x: 1, y: 1};
 let athlete;
-let previous_heading;
+let previous_heading = {delta: 0};
+let wheel_turning = false;
 
 
 let settings = common.settingsStore.get(null, {
@@ -33,6 +35,7 @@ const startingCoords = new Map([
     ['#tree', {w: 32, h: 48, x:439, y: 80}],
     ['#needle', {h: 64, w: 64, bY: -640, bX: -192}]
 ]);
+
 
 
 function resizeBus(){
@@ -67,7 +70,6 @@ function resizeBus(){
     busScale.x = parseInt(div.style.width) / startingCoords.get('#bus').w;   
     busScale.y = parseInt(div.style.height) / startingCoords.get('#bus').h;   
 
-    console.log(busScale);
 
     startingCoords.forEach( function( coords, selector ) {
         const elems = document.querySelectorAll(selector);
@@ -201,28 +203,50 @@ function animateOdoNumber(digitElem){
     digitElem.style.backgroundPositionY = newBgY + 'px';
 }   
 
+export function animateLeftTurn(){
+    wheel_turning = true;
+    let wheel = document.getElementById('steering-wheel');
+    wheel.classList = 'left';
+            
+    console.log('turning left...');
+}
+
 function spinWheel(heading) {
-    let delta = previous_heading - heading;
-    if ( Math.abs(delta)> 45 ){
-        let wheel = document.getElementById('steering-wheel');
-        if (delta > 0 ) {
-            wheel.classList = 'left';
-        } else {
-            wheel.classList = 'right';
-        }
-        previous_heading = heading;
+    let delta = previous_heading.degrees - heading;
+    if ( Math.abs(delta)> 20 && !wheel_turning){
+        if (delta > 0 ) { // we can only turn left
+            animateLeftTurn();
+        } 
+        previous_heading.degrees = heading;
+        previous_heading.last_updated = Date.now();
     } 
-    console.log(delta);
 }
 
 
+window.addEventListener('animationend', (event) => {
+    if (event.animationName === 'steer') {
+       document.getElementById('steering-wheel').classList = 'reset';
+       setTimeout(() => {
+        wheel_turning = false;
+       }, 1000);
+    } 
+  });
+
+
 export async function main() {
+    /* Load our dev toolboar */
+    if (settings.debugOn) {
+        document.querySelector('body').classList = document.querySelector('body').classList + ' debug';
+        const debugTpl = await sauce.template.getTemplate('templates/dev-tools.html.tpl');
+        document.getElementById('tools-container').append(await debugTpl());
+        dev.init();
+    }
+
+
     common.initInteractionListeners(); 
 
     window.addEventListener('resize', resizeBus);
     resizeBus();
-
-
 
     const gcs = await common.rpc.getGameConnectionStatus();
     gameConnection = !!(gcs && gcs.connected);
@@ -242,7 +266,8 @@ export async function main() {
             athleteId = watching.athleteId;
             startDistance = watching.state.distance;
             setDriverName(watching.athlete.fLast.substring(0,16));
-            previous_heading = watching.state.heading
+            previous_heading.degrees = watching.state.heading
+            previous_heading.last_updated = Date.now()
             console.log(watching);
             athlete = watching;
 
@@ -253,7 +278,7 @@ export async function main() {
         if (settings.dbEasyMode) {
             startDistance = watching.state.distance; //reset start to where we are now
             odoDistance = odoDistance +  settings.dbMeterage; //add saved distance to odo
-            console.log(odoDistance);
+
             common.settingsStore.set('dbMeterage', odoDistance);
         }
 
