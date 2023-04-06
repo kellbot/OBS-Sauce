@@ -38,6 +38,21 @@
         }
     },
     {
+        "file": "pages/space.html",
+        "id": "space",
+        "name": "Space",
+        "description": "Secrets",
+        "always_visible": false,
+        "overlay": true,
+        "frame": true,
+        "default_bounds": {
+            "width": 0.5,
+            "height": 500,
+            "x": 100,
+            "y": -100
+        }
+    },
+    {
         "file": "pages/course-notes.html",
         "id": "obs-course-notes",
         "name": "Course Notes",
